@@ -1,0 +1,13 @@
+# 가상환경 무시
+pose-env/
+
+# 파이썬 캐시 무시
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 기타 추천 무시 항목
+*.log
+*.db
+.DS_Store
