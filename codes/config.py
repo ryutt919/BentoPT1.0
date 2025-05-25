@@ -86,3 +86,8 @@ EXERCISE_PARAMS = {
         'tempo': {'min_time': 1.0, 'max_time': 3.0}
     }
 }
+
+FONT_PATHS = [
+    'C:/Windows/Fonts/malgun.ttf',
+    '/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc'
+]
