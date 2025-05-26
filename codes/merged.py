@@ -322,6 +322,31 @@ class PoseEstimator:
 # ========== VISUALIZER ==========
 class Visualizer:
     @staticmethod
+    def draw_perpendicular_wrist_lines(frame, landmarks, length=60, color=(0,255,0), thickness=1, alpha=0.5):
+        # 필요한 키 모두 존재할 때만
+        required_keys = [13, 14, 15, 16]
+        if not all(idx in landmarks for idx in required_keys):
+            return
+        wrist_a = landmarks[15]
+        wrist_b = landmarks[16]
+        for wrist_idx, elbow_idx in [(15, 13), (16, 14)]:
+            this_wrist = landmarks[wrist_idx]
+            this_elbow = landmarks[elbow_idx]
+            # 손목-손목 벡터 (15→16)
+            ab = np.array([wrist_b[0] - wrist_a[0], wrist_b[1] - wrist_a[1]], dtype=float)
+            # 수직 벡터
+            perp = np.array([-ab[1], ab[0]])
+            perp_norm = perp / (np.linalg.norm(perp) + 1e-8)
+            # 손목→팔꿈치 방향벡터
+            dir_we = np.array([this_elbow[0] - this_wrist[0], this_elbow[1] - this_wrist[1]], dtype=float)
+            # 방향 일치 판단: 팔꿈치-손목과 수직벡터 내적이 음수면 뒤집음
+            if np.dot(perp_norm, dir_we) < 0:
+                perp_norm = -perp_norm
+            pt1 = (int(this_wrist[0]), int(this_wrist[1]))
+            pt2 = (int(this_wrist[0] + perp_norm[0] * length), int(this_wrist[1] + perp_norm[1] * length))
+            Visualizer.draw_transparent_line(frame, pt1, pt2, color, thickness, alpha)
+
+    @staticmethod
     def draw_landmarks(frame, landmarks, scale=0.5, thickness=1):
         # 필요시 점도 알파 처리 가능
         pass
@@ -505,6 +530,7 @@ class MainProgram:
             }
             Visualizer.draw_landmarks(frame, landmarks, SCALE, THICKNESS)
             Visualizer.draw_connections(frame, landmarks, CONNECTIONS_BASIC, THICKNESS)
+            Visualizer.draw_perpendicular_wrist_lines(frame, landmarks)
             Visualizer.draw_centers(frame, centers, THICKNESS)
             Visualizer.draw_feedback(frame, feedback_list, thickness=THICKNESS)
             if MainProgram.recording and MainProgram.writer:
