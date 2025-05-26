@@ -146,7 +146,6 @@ def main():
         draw_landmarks(frame, landmarks, SCALE, THICKNESS)
         draw_connections(frame, landmarks, CONNECTIONS_BASIC, THICKNESS)
         draw_centers(frame, centers, THICKNESS)
-        Visualizer.draw_connections(frame, landmarks, CONNECTIONS_LEG, THICKNESS)
         # exercise.update가 반환한 feedback_list를 바로 렌더링
         draw_feedback(frame, feedback_list, SCALE, THICKNESS)
 
