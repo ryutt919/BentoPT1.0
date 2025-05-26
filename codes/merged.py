@@ -1,4 +1,5 @@
 import time
+import math
 import cv2 as cv
 import numpy as np
 import tkinter as tk
@@ -10,7 +11,8 @@ from config import (
     SCALE, THICKNESS,
     CONNECTIONS_BASIC, COLORS,
     EXERCISE_LIST, HEAD_LANDMARKS, JOINT_INDICES,
-    FONT_PATHS, FEEDBACK_MESSAGES, EXERCISE_PARAMS
+    FONT_PATHS, FEEDBACK_MESSAGES, EXERCISE_PARAMS, 
+    CONNECTIONS_LEG
 )
 
 # ========== UTILS ==========
@@ -221,6 +223,95 @@ class ExerciseAnalyzer:
             counter = ExerciseAnalyzer._counters[name]
             count_inc, _ = counter.update(landmarks, now)
             return count_inc, None, None, feedback_items
+        elif name == 'squat':
+            # 스쿼트: 무릎 각도 피드백 및 카운트
+            try:
+                left_hip, left_knee, left_ankle = landmarks[23], landmarks[25], landmarks[27]
+                right_hip, right_knee, right_ankle = landmarks[24], landmarks[26], landmarks[28]
+                left_knee_angle = Utils.get_angle(left_hip, left_knee, left_ankle)
+                right_knee_angle = Utils.get_angle(right_hip, right_knee, right_ankle)
+                avg_knee_angle = (left_knee_angle + right_knee_angle) / 2
+                if avg_knee_angle < 80:
+                    feedback_items.append("무릎 각도: 너무 낮음")
+                elif avg_knee_angle > 120:
+                    feedback_items.append("무릎 각도: 너무 높음")
+                else:
+                    feedback_items.append("무릎 각도: 적절함")
+            except Exception:
+                avg_knee_angle = 180  # 기본값
+            # 카운터
+            if name not in ExerciseAnalyzer._counters:
+                angle_thresholds = {'up': 170, 'down': 90}
+                tempo_thresholds = {'min_time': 0.5, 'max_time': 3.0}
+                ExerciseAnalyzer._counters[name] = RepCounter(angle_thresholds, tempo_thresholds)
+            counter = ExerciseAnalyzer._counters[name]
+            count_inc, tempo_code = counter.update(avg_knee_angle, now)
+            return count_inc, tempo_code, None, feedback_items
+        elif name == 'lunge':
+            # 런지: 앞쪽 무릎 각도 피드백 및 카운트 (왼쪽 다리 기준)
+            try:
+                left_hip, left_knee, left_ankle = landmarks[23], landmarks[25], landmarks[27]
+                left_knee_angle = Utils.get_angle(left_hip, left_knee, left_ankle)
+                if left_knee_angle < 80:
+                    feedback_items.append("왼쪽 무릎 각도: 너무 낮음")
+                elif left_knee_angle > 120:
+                    feedback_items.append("왼쪽 무릎 각도: 너무 높음")
+                else:
+                    feedback_items.append("왼쪽 무릎 각도: 적절함")
+            except Exception:
+                left_knee_angle = 180
+            if name not in ExerciseAnalyzer._counters:
+                angle_thresholds = {'up': 180, 'down': 90}
+                tempo_thresholds = {'min_time': 1.0, 'max_time': 3.0}
+                ExerciseAnalyzer._counters[name] = RepCounter(angle_thresholds, tempo_thresholds)
+            counter = ExerciseAnalyzer._counters[name]
+            count_inc, tempo_code = counter.update(left_knee_angle, now)
+            return count_inc, tempo_code, None, feedback_items
+
+        elif name == 'biceps_curl':
+            # 바이셉스 컬: 팔꿈치 각도 피드백 및 카운트 (왼팔 기준)
+            try:
+                left_shoulder, left_elbow, left_wrist = landmarks[11], landmarks[13], landmarks[15]
+                left_elbow_angle = Utils.get_angle(left_shoulder, left_elbow, left_wrist)
+                if left_elbow_angle < 40:
+                    feedback_items.append("팔꿈치 각도: 너무 굽힘")
+                elif left_elbow_angle > 160:
+                    feedback_items.append("팔꿈치 각도: 너무 폄")
+                else:
+                    feedback_items.append("팔꿈치 각도: 적절함")
+            except Exception:
+                left_elbow_angle = 180
+            if name not in ExerciseAnalyzer._counters:
+                angle_thresholds = {'up': 40, 'down': 160}
+                tempo_thresholds = {'min_time': 1.0, 'max_time': 3.0}
+                ExerciseAnalyzer._counters[name] = RepCounter(angle_thresholds, tempo_thresholds)
+            counter = ExerciseAnalyzer._counters[name]
+            count_inc, tempo_code = counter.update(left_elbow_angle, now)
+            return count_inc, tempo_code, None, feedback_items
+        elif name == 'pushup':
+            # 푸쉬업: 팔꿈치 각도 피드백 및 카운트
+            try:
+                left_shoulder, left_elbow, left_wrist = landmarks[11], landmarks[13], landmarks[15]
+                right_shoulder, right_elbow, right_wrist = landmarks[12], landmarks[14], landmarks[16]
+                left_elbow_angle = Utils.get_angle(left_shoulder, left_elbow, left_wrist)
+                right_elbow_angle = Utils.get_angle(right_shoulder, right_elbow, right_wrist)
+                avg_elbow_angle = (left_elbow_angle + right_elbow_angle) / 2
+                if avg_elbow_angle < 60:
+                    feedback_items.append("팔꿈치 각도: 너무 낮음")
+                elif avg_elbow_angle > 160:
+                    feedback_items.append("팔꿈치 각도: 너무 높음")
+                else:
+                    feedback_items.append("팔꿈치 각도: 적절함")
+            except Exception:
+                avg_elbow_angle = 180  # 기본값
+            # 카운터
+            if name not in ExerciseAnalyzer._counters:
+                angle_thresholds = {'up': 170, 'down': 80}
+                tempo_thresholds = {'min_time': 0.5, 'max_time': 3.0}
+                ExerciseAnalyzer._counters[name] = RepCounter(angle_thresholds, tempo_thresholds)
+            counter = ExerciseAnalyzer._counters[name]
+            count_inc, tempo_code = counter.update(avg_elbow_angle, now)
+            return count_inc, tempo_code, None, feedback_items
         return 0, None, None, []
     
 # ========== EXERCISE (피드백 추가) ==========
@@ -231,14 +322,8 @@ class Exercise:
         self.name = name
         self.params = EXERCISE_PARAMS[name]
         self.total_count = 0
-    def update(self, landmarks, now=None):
-        # 피드백 추가
-        if self.name == 'pullup':
-            count_inc, tempo_code, angle_code, feedback_items = ExerciseAnalyzer.analyze_exercise(self.name, landmarks, now)
-        else:
-            count_inc, tempo_code, angle_code = ExerciseAnalyzer.analyze_exercise(self.name, landmarks, now)
-            feedback_items = []
-        self.total_count += count_inc
+
+    def _make_feedback_list(self, count_inc, tempo_code, angle_code, feedback_items):
         feedback_list = []
         count_msg = FEEDBACK_MESSAGES['count'].format(exercise=self.name, count=self.total_count)
         feedback_list.append(count_msg)
@@ -254,18 +339,55 @@ class Exercise:
             angle_msg = FEEDBACK_MESSAGES.get(angle_code)
             if angle_msg:
                 feedback_list.append(angle_msg)
-        feedback_list.extend(feedback_items)  # 피드백 추가
+        feedback_list.extend(feedback_items)
+        return feedback_list
+
+    def update(self, landmarks, now=None):
+        count_inc, tempo_code, angle_code, feedback_items = ExerciseAnalyzer.analyze_exercise(self.name, landmarks, now)
+        self.total_count += count_inc
+        feedback_list = self._make_feedback_list(count_inc, tempo_code, angle_code, feedback_items)
         return self.total_count, feedback_list
+# =========== 
+class OneEuroFilter:
+    def __init__(self, freq=30, min_cutoff=1.0, beta=0.0, d_cutoff=1.0):
+        self.freq = freq
+        self.min_cutoff = min_cutoff
+        self.beta = beta
+        self.d_cutoff = d_cutoff
+        self.x_prev = None
+        self.dx_prev = 0
+        self.last_time = None
+
+    def alpha(self, cutoff):
+        tau = 1.0 / (2 * math.pi * cutoff)
+        te = 1.0 / self.freq
+        return 1.0 / (1.0 + tau / te)
+
+    def filter(self, x, t=None):
+        if self.x_prev is None:
+            self.x_prev = x
+            return x
+        dx = (x - self.x_prev) * self.freq
+        dx_hat = self.dx_prev + self.alpha(self.d_cutoff) * (dx - self.dx_prev)
+        cutoff = self.min_cutoff + self.beta * abs(dx_hat)
+        alpha = self.alpha(cutoff)
+        x_hat = self.x_prev + alpha * (x - self.x_prev)
+        self.x_prev = x_hat
+        self.dx_prev = dx_hat
+        return x_hat
+
 # ========== POSE ESTIMATOR ==========
 class PoseEstimator:
     mp_pose = mp.solutions.pose
     _pose = mp_pose.Pose(
         static_image_mode=False,
-        min_detection_confidence=0.5,
-        min_tracking_confidence=0.5
+        min_detection_confidence=0.7,
+        min_tracking_confidence=0.7
     )
+    _filters = {}  # One Euro Filter 인스턴스 저장용
+
     @staticmethod
-    def get_pose_landmarks(frame):
+    def get_pose_landmarks(frame, min_cutoff=0.2, beta=0.15):
         rgb = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
         results = PoseEstimator._pose.process(rgb)
         h, w = frame.shape[:2]
@@ -277,7 +399,17 @@ class PoseEstimator:
                 if hasattr(lm, 'visibility') and lm.visibility < 0.5:
                     continue
                 x, y = int(lm.x * w), int(lm.y * h)
-                landmarks[idx] = (x, y)
+                # --- One Euro Filter 적용 --- ## Robust한 선 움직임임
+               
+                if idx not in PoseEstimator._filters:
+                    PoseEstimator._filters[idx] = (
+                        OneEuroFilter(min_cutoff, beta), #min_cutoff: 0.2 ~ 0.5 (작을수록 빠름, 노이즈는 약간 증가)
+                        OneEuroFilter(min_cutoff, beta) #beta: 0.05 ~ 0.2 (클수록 빠른 움직임에 더 잘 반응)
+                    )
+                fx, fy = PoseEstimator._filters[idx]
+                x_f = int(fx.filter(x))
+                y_f = int(fy.filter(y))
+                landmarks[idx] = (x_f, y_f)
         return landmarks
     @staticmethod
     def get_head_center(landmarks):
@@ -322,34 +454,42 @@ class PoseEstimator:
 # ========== VISUALIZER ==========
 class Visualizer:
     @staticmethod
-    def draw_perpendicular_wrist_lines(frame, landmarks, length=60, color=(0,255,0), thickness=1, alpha=0.5):
-        # 필요한 키 모두 존재할 때만
-        required_keys = [13, 14, 15, 16]
-        if not all(idx in landmarks for idx in required_keys):
-            return
-        wrist_a = landmarks[15]
-        wrist_b = landmarks[16]
-        for wrist_idx, elbow_idx in [(15, 13), (16, 14)]:
-            this_wrist = landmarks[wrist_idx]
-            this_elbow = landmarks[elbow_idx]
-            # 손목-손목 벡터 (15→16)
-            ab = np.array([wrist_b[0] - wrist_a[0], wrist_b[1] - wrist_a[1]], dtype=float)
-            # 수직 벡터
-            perp = np.array([-ab[1], ab[0]])
-            perp_norm = perp / (np.linalg.norm(perp) + 1e-8)
-            # 손목→팔꿈치 방향벡터
-            dir_we = np.array([this_elbow[0] - this_wrist[0], this_elbow[1] - this_wrist[1]], dtype=float)
-            # 방향 일치 판단: 팔꿈치-손목과 수직벡터 내적이 음수면 뒤집음
-            if np.dot(perp_norm, dir_we) < 0:
-                perp_norm = -perp_norm
-            pt1 = (int(this_wrist[0]), int(this_wrist[1]))
-            pt2 = (int(this_wrist[0] + perp_norm[0] * length), int(this_wrist[1] + perp_norm[1] * length))
-            Visualizer.draw_transparent_line(frame, pt1, pt2, color, thickness, alpha)
+    def draw_perpendicular_lines(frame, landmarks, exercise_name=None, length=60, color=(0,255,0), thickness=1, alpha=0.5):
+        if exercise_name in ['squat', 'lunge']:
+            # 하체 운동: 발가락 끝에서 무릎 y까지 수직선, 두 쪽 중 더 긴 길이로 통일
+            required_keys = [25, 26, 31, 32]  # 무릎, 발가락 끝
+            if not all(idx in landmarks for idx in required_keys):
+                return
+            # 각 다리의 길이 계산
+            left_len = abs(landmarks[31][1] - landmarks[25][1])
+            right_len = abs(landmarks[32][1] - landmarks[26][1])
+            max_len = max(left_len, right_len)
+            # 양쪽 모두 max_len으로 선 그리기
+            for toe_idx in [31, 32]:
+                this_toe = landmarks[toe_idx]
+                pt1 = (int(this_toe[0]), int(this_toe[1]))
+                pt2 = (int(this_toe[0]), int(this_toe[1] - max_len))  # 위로 max_len만큼
+                Visualizer.draw_transparent_line(frame, pt1, pt2, color, thickness*2, alpha)
+        else:
+            # 상체 운동: 손목-팔꿈치 기준 (기존 코드)
+            required_keys = [13, 14, 15, 16]
+            if not all(idx in landmarks for idx in required_keys):
+                return
+            wrist_a = landmarks[15]
+            wrist_b = landmarks[16]
+            for wrist_idx, elbow_idx in [(15, 13), (16, 14)]:
+                this_wrist = landmarks[wrist_idx]
+                this_elbow = landmarks[elbow_idx]
+                ab = np.array([wrist_b[0] - wrist_a[0], wrist_b[1] - wrist_a[1]], dtype=float)
+                perp = np.array([-ab[1], ab[0]])
+                perp_norm = perp / (np.linalg.norm(perp) + 1e-8)
+                dir_we = np.array([this_elbow[0] - this_wrist[0], this_elbow[1] - this_wrist[1]], dtype=float)
+                if np.dot(perp_norm, dir_we) < 0:
+                    perp_norm = -perp_norm
+                pt1 = (int(this_wrist[0]), int(this_wrist[1]))
+                pt2 = (int(this_wrist[0] + perp_norm[0] * length), int(this_wrist[1] + perp_norm[1] * length))
+                Visualizer.draw_transparent_line(frame, pt1, pt2, color, thickness, alpha)
 
-    @staticmethod
-    def draw_landmarks(frame, landmarks, scale=0.5, thickness=1):
-        # 필요시 점도 알파 처리 가능
-        pass
     @staticmethod
     def draw_transparent_line(frame, pt1, pt2, color, thickness=1, alpha=0.5):
         overlay = frame.copy()
@@ -513,12 +653,38 @@ class MainProgram:
         exercise = Exercise(exercise_name)
         width  = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
         height = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
+
+        target_w, target_h = int(1920/1.5), int(1080/1.5)
+        aspect = width / height
+        if aspect >= 16/9:
+            disp_width = target_w
+            disp_height = int(target_w / aspect)
+        else:
+            disp_height = target_h
+            disp_width = int(target_h * aspect)
+
+        # 화면 중앙 위치 계산 (tkinter 사용)
+        root = tk.Tk()
+        screen_w = root.winfo_screenwidth()
+        screen_h = root.winfo_screenheight()
+        root.destroy()
+        win_x = (screen_w - disp_width) // 2
+        win_y = (screen_h - disp_height) // 2
+
+        cv.namedWindow('Pose Tracker', cv.WINDOW_NORMAL)
+        cv.resizeWindow('Pose Tracker', disp_width, disp_height)
+        cv.moveWindow('Pose Tracker', win_x, win_y)
+
         while cap.isOpened():
             ret, frame = cap.read()
             if not ret:
                 break
             if MainProgram.flipped:
                 frame = cv.flip(frame, 1)
+
+            # 프레임 리사이즈
+            frame = cv.resize(frame, (disp_width, disp_height))
+
             landmarks = PoseEstimator.get_pose_landmarks(frame)
             now = time.time()
             count, feedback_list = exercise.update(landmarks, now)
@@ -528,20 +694,21 @@ class MainProgram:
                 'hip':      PoseEstimator.get_hip_center(landmarks),
                 'spine':    PoseEstimator.estimate_spine(landmarks)
             }
-            Visualizer.draw_landmarks(frame, landmarks, SCALE, THICKNESS)
             Visualizer.draw_connections(frame, landmarks, CONNECTIONS_BASIC, THICKNESS)
-            Visualizer.draw_perpendicular_wrist_lines(frame, landmarks)
+            if exercise_name == 'squat' or exercise_name == 'pushup' or exercise_name == 'lunge' :
+                Visualizer.draw_connections(frame, landmarks, CONNECTIONS_LEG, THICKNESS)
+            Visualizer.draw_perpendicular_lines(frame, landmarks, exercise_name=exercise_name)
             Visualizer.draw_centers(frame, centers, THICKNESS)
             Visualizer.draw_feedback(frame, feedback_list, thickness=THICKNESS)
             if MainProgram.recording and MainProgram.writer:
                 MainProgram.writer.write(frame)
             cv.imshow('Pose Tracker', frame)
             key = cv.waitKey(1) & 0xFF
-            MainProgram.handle_keys(key, (width, height))
+            MainProgram.handle_keys(key, (disp_width, disp_height))
             if key == 27:
                 break
             if MainProgram.paused:
-                MainProgram.handle_keys(cv.waitKey(), (width, height))
+                MainProgram.handle_keys(cv.waitKey(), (disp_width, disp_height))
                 
         cap.release()
         if MainProgram.writer:
