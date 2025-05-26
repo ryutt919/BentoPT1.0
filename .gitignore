@@ -11,5 +11,3 @@ __pycache__/
 *.log
 *.db
 .DS_Store
-
-./codes/merged.py
