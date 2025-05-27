@@ -160,247 +160,248 @@ class RepCounter:
         return None
 
 # ========== EXERCISE ANALYZER (pullup feedback 추가) ==========
+"""
+ExerciseAnalyzer (정규화·좌우 평균/최대 변위 통합 버전)
+=====================================================
+▶ 주요 변경점
+ 1. 모든 거리 기반 임계값을 **어깨폭 대비 비율(%)** 로 계산하여 해상도·거리 편차 제거
+ 2. **좌·우 평균/최대 변위** 로 카메라 블라인드·운동 비대칭·노이즈 완화
+ 3. 각 운동별 핵심 피드백 주석을 **한글**로 명시
+
+※ 의존 모듈
+   Utils        : 각도·거리 계산 유틸(외부 정의)
+   Visualizer   : 피드백 포인트 표시(외부 정의)
+   RepCounter   : 반복 카운터(스쿼트·런지·푸시업·컬용)
+   PullupCounter: 풀업 전용 카운터(최소 각도 저장 기능 포함)
+"""
+
 class ExerciseAnalyzer:
+    """운동 자세를 프레임별로 분석하여 피드백·반복수를 반환"""
+
+    # ────────── 클래스 상태 변수 ──────────
     _counters = {}
-    _prev_biceps_elbow = None
-    _prev_biceps_shoulder = None
-    _lunge_knee_history = {'left': [], 'right': []}  # 최근 5프레임 y좌표 저장
+    _prev_biceps_elbow = {"left": None, "right": None}
+    _prev_biceps_shoulder = {"left": None, "right": None}
+    _lunge_knee_history = {"left": [], "right": []}
 
+    # ────────── 임계값(어깨폭 대비 비율) ──────────
+    _TH = {
+        "hip_imbalance": 0.10,      # 골반 좌우 높이차 10 %↑ 시 경고
+        "knee_toe_fwd": 0.07,       # 무릎이 발끝을 7 %↑ 넘어가면 경고
+        "shoulder_height": 0.08,    # 어깨 좌우 높이차 8 %↑ 경고
+        "wrist_shoulder_y": 0.15,   # 손목‑어깨 y 오프셋 15 %↑ 경고
+        "hip_center_line": 0.12,    # 푸시업 골반 sag/rise 12 %↑ 경고
+        "joint_sway": 0.05,         # 팔·어깨 흔들림 5 %↑ 경고
+    }
+
+    # ────────── 보조 함수 ──────────
+    
+    def _scale_factor(lms):
+        try:
+            w = np.linalg.norm(np.array(lms[11]) - np.array(lms[12]))
+            return 100.0 / w if w > 1e-6 else 1e-6  # 어깨폭 대비 %로 변환
+        except Exception:
+            return 1e-6
+
+    # ────────── 메인 분석 함수 ──────────
     @staticmethod
-    def analyze_exercise(name, landmarks, now=None):
-        feedback_items = []
-        if name == 'pullup':
-            f1 = f2 = f3 = None
+    def analyze_exercise(name, lms, now=None):
+        fb = []  # 피드백 문자열 리스트
+        S = ExerciseAnalyzer._scale_factor(lms) or 1e-9  # 스케일 팩터(0 방지)
+
+        # ================================================== 1. PULL‑UP
+        if name == "pullup":
+            # (1) 어깨‑손목선 평행도
             try:
-                left_sh, right_sh = landmarks[11], landmarks[12]
-                left_wr, right_wr = landmarks[15], landmarks[16]
-                angle1 = Utils.angle_between_lines(left_sh, right_sh, left_wr, right_wr)
-                if angle1 <= 10:
-                    f1 = "어깨-손목선 평행: 좋음"
-                elif angle1 <= 20:
-                    f1 = "어깨-손목선 평행: 주의"
-                else:
-                    f1 = "어깨-손목선 평행: 불균형"
-            except:
-                f1 = None
-            try:
-                sh_center = ((landmarks[11][0] + landmarks[12][0]) // 2,
-                             (landmarks[11][1] + landmarks[12][1]) // 2)
-                hip_center = ((landmarks[23][0] + landmarks[24][0]) // 2,
-                              (landmarks[23][1] + landmarks[24][1]) // 2)
-                angle2 = Utils.angle_with_vertical(sh_center, hip_center)
-                if angle2 <= 10:
-                    f2 = "척추선 수직: 좋음"
-                elif angle2 <= 20:
-                    f2 = "척추선 수직: 주의"
-                else:
-                    f2 = "척추선 수직: 비뚤어짐"
-            except:
-                f2 = None
-            try:
-                counter = ExerciseAnalyzer._counters.get('pullup')
-                minlms = None
-                if counter is not None and hasattr(counter, 'get_min_angle_landmarks'):
-                    minlms = counter.get_min_angle_landmarks()
-                if minlms and all(k in minlms and minlms[k] is not None for k in (11, 12, 13, 15)):
-                    angle3 = Utils.angle_between_lines(minlms[11], minlms[12], minlms[13], minlms[15])
-                    if 80 <= angle3 <= 100:
-                        f3 = f"최대수축 손목-팔꿈치/어깨선 직교: 좋음 ({int(angle3)}°)"
-                    elif 70 <= angle3 < 80 or 100 < angle3 <= 110:
-                        f3 = f"최대수축 손목-팔꿈치/어깨선 직교: 주의 ({int(angle3)}°)"
-                    else:
-                        f3 = f"최대수축 손목-팔꿈치/어깨선 직교: 미흡 ({int(angle3)}°)"
-                    if counter is not None:
-                        counter.set_last_min_feedback(f3, angle3)
-                else:
-                    if counter is not None and counter.get_last_min_feedback():
-                        # 직전 피드백은 angle3 값 포함해서 유지
-                        last_f3 = counter.get_last_min_feedback()
-                        f3 = last_f3
-                    else:
-                        f3 = None
-            except:
-                f3 = None
-            if f1: feedback_items.append(f1)
-            if f2: feedback_items.append(f2)
-            if f3: feedback_items.append(f3)
-            if name not in ExerciseAnalyzer._counters:
-                ExerciseAnalyzer._counters[name] = PullupCounter()
-            counter = ExerciseAnalyzer._counters[name]
-            count_inc, _ = counter.update(landmarks, now)
-            return count_inc, None, None, feedback_items
-        elif name == 'squat':
-            # 스쿼트: 무릎 각도 피드백 및 카운트
-            try:
-                left_hip, left_knee, left_ankle = landmarks[23], landmarks[25], landmarks[27]
-                right_hip, right_knee, right_ankle = landmarks[24], landmarks[26], landmarks[28]
-                left_toe, right_toe = landmarks[31], landmarks[32]
-                # 무릎 각도
-                left_knee_angle = Utils.get_angle(left_hip, left_knee, left_ankle)
-                right_knee_angle = Utils.get_angle(right_hip, right_knee, right_ankle)
-                avg_knee_angle = (left_knee_angle + right_knee_angle) / 2
-                # 무릎이 발끝을 넘는지
-                if left_knee[0] > left_toe[0]:
-                    feedback_items.append("왼쪽 무릎이 발끝을 넘음: 주의")
-                    Visualizer.add_bad_pose_point(left_knee)
-                if right_knee[0] > right_toe[0]:
-                    feedback_items.append("오른쪽 무릎이 발끝을 넘음: 주의")
-                    Visualizer.add_bad_pose_point(right_knee)
-                # 골반 좌우 높이 차이
-                hip_diff = abs(left_hip[1] - right_hip[1])
-                if hip_diff > 30:
-                    feedback_items.append("골반 좌우 높이 차이: 주의")
-                    Visualizer.add_bad_pose_point(left_hip)
-                    Visualizer.add_bad_pose_point(right_hip)
-                # 상체 기울기(어깨-골반 선과 수직선의 각도)
-                shoulder_center = ((landmarks[11][0] + landmarks[12][0]) // 2, (landmarks[11][1] + landmarks[12][1]) // 2)
-                hip_center = ((landmarks[23][0] + landmarks[24][0]) // 2, (landmarks[23][1] + landmarks[24][1]) // 2)
-                trunk_angle = Utils.angle_with_vertical(shoulder_center, hip_center)
-                if trunk_angle > 20:
-                    feedback_items.append("상체가 너무 숙여짐: 주의")
-                    Visualizer.add_bad_pose_point(shoulder_center)
+                l_sh, r_sh = lms[11], lms[12]
+                l_wr, r_wr = lms[15], lms[16]
+                a1 = Utils.angle_between_lines(l_sh, r_sh, l_wr, r_wr)
+                fb.append("어깨‑손목선 평행: " + ("좋음" if a1 <= 10 else "주의" if a1 <= 20 else "불균형"))
             except Exception:
                 pass
-            # 카운터
-            if name not in ExerciseAnalyzer._counters:
-                angle_thresholds = {'up': 170, 'down': 90}
-                tempo_thresholds = {'min_time': 0.5, 'max_time': 3.0}
-                ExerciseAnalyzer._counters[name] = RepCounter(angle_thresholds, tempo_thresholds)
-            counter = ExerciseAnalyzer._counters[name]
-            count_inc, tempo_code = counter.update(avg_knee_angle, now)
-            return count_inc, tempo_code, None, feedback_items
-        elif name == 'lunge':
+            # (2) 척추 수직도
             try:
-                left_hip, left_knee, left_ankle = landmarks[23], landmarks[25], landmarks[27]
-                right_hip, right_knee, right_ankle = landmarks[24], landmarks[26], landmarks[28]
-                left_toe, right_toe = landmarks[31], landmarks[32]
-
-                # 무릎 y좌표 변화량 기록
-                ExerciseAnalyzer._lunge_knee_history['left'].append(left_knee[1])
-                ExerciseAnalyzer._lunge_knee_history['right'].append(right_knee[1])
-                if len(ExerciseAnalyzer._lunge_knee_history['left']) > 5:
-                    ExerciseAnalyzer._lunge_knee_history['left'].pop(0)
-                if len(ExerciseAnalyzer._lunge_knee_history['right']) > 5:
-                    ExerciseAnalyzer._lunge_knee_history['right'].pop(0)
-                left_var = max(ExerciseAnalyzer._lunge_knee_history['left']) - min(ExerciseAnalyzer._lunge_knee_history['left'])
-                right_var = max(ExerciseAnalyzer._lunge_knee_history['right']) - min(ExerciseAnalyzer._lunge_knee_history['right'])
-
-                # 더 많이 움직인 쪽을 reps 기준으로 사용
-                if left_var > right_var:
-                    knee_angle = Utils.get_angle(left_hip, left_knee, left_ankle)
-                    # 피드백 예시
-                    if left_knee[0] > left_toe[0]:
-                        feedback_items.append("왼쪽 무릎이 발끝을 넘음: 주의")
-                        Visualizer.add_bad_pose_point(left_knee)
-                else:
-                    # 오른쪽 무릎이 reps 기준
-                    knee_angle = Utils.get_angle(right_hip, right_knee, right_ankle)
-                    if right_knee[0] > right_toe[0]:
-                        feedback_items.append("오른쪽 무릎이 발끝을 넘음: 주의")
-                        Visualizer.add_bad_pose_point(right_knee)
-
-                # 골반 좌우 높이 차이 피드백(공통)
-                hip_diff = abs(left_hip[1] - right_hip[1])
-                if hip_diff > 30:
-                    feedback_items.append("골반 좌우 높이 차이: 주의")
-                    Visualizer.add_bad_pose_point(left_hip)
-                    Visualizer.add_bad_pose_point(right_hip)
-            except Exception:
-                knee_angle = 180  # 예외 시 기본값
-
-            if name not in ExerciseAnalyzer._counters:
-                angle_thresholds = {'up': 150, 'down': 100}
-                tempo_thresholds = {'min_time': 0.5, 'max_time': 3.0}
-                ExerciseAnalyzer._counters[name] = RepCounter(angle_thresholds, tempo_thresholds)
-            counter = ExerciseAnalyzer._counters[name]
-            count_inc, tempo_code = counter.update(knee_angle, now)
-            return count_inc, tempo_code, None, feedback_items
-
-        elif name == 'biceps_curl':
-            try:
-                left_shoulder, left_elbow, left_wrist = landmarks[11], landmarks[13], landmarks[15]
-                left_elbow_angle = Utils.get_angle(left_shoulder, left_elbow, left_wrist)
-                # 팔꿈치 고정성 체크
-                prev_elbow = ExerciseAnalyzer._prev_biceps_elbow
-                if prev_elbow is not None:
-                    elbow_move = np.linalg.norm(np.array(left_elbow) - np.array(prev_elbow))
-                    if elbow_move > 15:  # 임계값(픽셀) 조정 가능
-                        feedback_items.append("팔꿈치가 움직임: 고정 필요")
-                        Visualizer.add_bad_pose_point(left_elbow)
-                ExerciseAnalyzer._prev_biceps_elbow = left_elbow
-
-                # 상체 흔들림 체크
-                prev_shoulder = ExerciseAnalyzer._prev_biceps_shoulder
-                if prev_shoulder is not None:
-                    shoulder_move = np.linalg.norm(np.array(left_shoulder) - np.array(prev_shoulder))
-                    if shoulder_move > 15:
-                        feedback_items.append("상체가 흔들림: 고정 필요")
-                        Visualizer.add_bad_pose_point(left_shoulder)
-                ExerciseAnalyzer._prev_biceps_shoulder = left_shoulder
-
-                # 기존 각도 피드백
-                if left_elbow_angle < 40:
-                    feedback_items.append("팔꿈치 각도: 너무 굽힘")
-                    Visualizer.add_bad_pose_point(left_elbow)
-                elif left_elbow_angle > 160:
-                    feedback_items.append("팔꿈치 각도: 너무 폄")
-                    Visualizer.add_bad_pose_point(left_elbow)
-                else:
-                    feedback_items.append("팔꿈치 각도: 적절함")
-            except Exception:
-                left_elbow_angle = 180            
-            if name not in ExerciseAnalyzer._counters:
-                angle_thresholds = {'up': 40, 'down': 160}
-                tempo_thresholds = {'min_time': 1.0, 'max_time': 3.0}
-                ExerciseAnalyzer._counters[name] = RepCounter(angle_thresholds, tempo_thresholds)
-            counter = ExerciseAnalyzer._counters[name]
-            count_inc, tempo_code = counter.update(left_elbow_angle, now)
-            return count_inc, tempo_code, None, feedback_items
-        elif name == 'pushup':
-            left_elbow_angle = Utils.get_angle(left_shoulder, left_elbow, left_wrist)
-            right_elbow_angle = Utils.get_angle(right_shoulder, right_elbow, right_wrist)
-            avg_elbow_angle = (left_elbow_angle + right_elbow_angle) / 2
-            try:
-                left_shoulder, left_elbow, left_wrist = landmarks[11], landmarks[13], landmarks[15]
-                right_shoulder, right_elbow, right_wrist = landmarks[12], landmarks[14], landmarks[16]
-                left_hip, right_hip = landmarks[23], landmarks[24]
-                left_ankle, right_ankle = landmarks[27], landmarks[28]
-                # 몸 일직선: 어깨-골반-발목이 거의 일직선인지
-                body_line_angle = Utils.angle_between_lines(left_shoulder, left_hip, left_hip, left_ankle)
-                if abs(body_line_angle - 180) > 20:
-                    feedback_items.append("몸이 일직선이 아님: 주의")
-                    Visualizer.add_bad_pose_point(left_hip)
-                # 어깨 높이 차이
-                shoulder_diff = abs(left_shoulder[1] - right_shoulder[1])
-                if shoulder_diff > 20:
-                    feedback_items.append("어깨 높이 차이: 주의")
-                    Visualizer.add_bad_pose_point(left_shoulder)
-                    Visualizer.add_bad_pose_point(right_shoulder)
-                # 손 위치: 손목이 어깨보다 너무 앞/뒤
-                if abs(left_wrist[1] - left_shoulder[1]) > 60:
-                    feedback_items.append("왼손 위치가 어깨보다 너무 앞/뒤: 주의")
-                    Visualizer.add_bad_pose_point(left_wrist)
-                if abs(right_wrist[1] - right_shoulder[1]) > 60:
-                    feedback_items.append("오른손 위치가 어깨보다 너무 앞/뒤: 주의")
-                    Visualizer.add_bad_pose_point(right_wrist)
-                # 엉덩이 들림/처짐
-                hip_center = ((left_hip[0] + right_hip[0]) // 2, (left_hip[1] + right_hip[1]) // 2)
-                shoulder_center = ((left_shoulder[0] + right_shoulder[0]) // 2, (left_shoulder[1] + right_shoulder[1]) // 2)
-                ankle_center = ((left_ankle[0] + right_ankle[0]) // 2, (left_ankle[1] + right_ankle[1]) // 2)
-                # 골반이 어깨-발목 선보다 위/아래로 벗어나면
-                if abs(hip_center[1] - ((shoulder_center[1] + ankle_center[1]) // 2)) > 40:
-                    feedback_items.append("엉덩이 들림/처짐: 주의")
-                    Visualizer.add_bad_pose_point(hip_center)
+                sh_c = ((lms[11][0] + lms[12][0]) // 2, (lms[11][1] + lms[12][1]) // 2)
+                hip_c = ((lms[23][0] + lms[24][0]) // 2, (lms[23][1] + lms[24][1]) // 2)
+                a2 = Utils.angle_with_vertical(sh_c, hip_c)
+                fb.append("척추선 수직: " + ("좋음" if a2 <= 10 else "주의" if a2 <= 20 else "비뚤어짐"))
             except Exception:
                 pass
-            # 카운터
-            if name not in ExerciseAnalyzer._counters:
-                angle_thresholds = {'up': 170, 'down': 80}
-                tempo_thresholds = {'min_time': 0.5, 'max_time': 3.0}
-                ExerciseAnalyzer._counters[name] = RepCounter(angle_thresholds, tempo_thresholds)
-            counter = ExerciseAnalyzer._counters[name]
-            count_inc, tempo_code = counter.update(avg_elbow_angle, now)
-            return count_inc, tempo_code, None, feedback_items
+            # (3) 최대 수축 시 전완‑어깨 직교(좌우 평균)
+            try:
+                counter = ExerciseAnalyzer._counters.get("pullup")
+                mm = counter.get_min_angle_landmarks() if counter and hasattr(counter, "get_min_angle_landmarks") else None
+                if mm and all(k in mm and mm[k] is not None for k in (11, 12, 13, 14, 15, 16)):
+                    ang_l = Utils.angle_between_lines(mm[11], mm[12], mm[13], mm[15])
+                    ang_r = Utils.angle_between_lines(mm[11], mm[12], mm[14], mm[16])
+                    ang_m = (ang_l + ang_r) / 2
+                    grade = "좋음" if 80 <= ang_m <= 100 else "주의" if 70 <= ang_m < 80 or 100 < ang_m <= 110 else "미흡"
+                    msg = f"최대수축 전완‑어깨 직교: {grade} ({int(ang_m)}°)"
+                    fb.append(msg)
+                    if counter:
+                        counter.set_last_min_feedback(msg, ang_m)
+                elif counter and counter.get_last_min_feedback():
+                    fb.append(counter.get_last_min_feedback())
+            except Exception:
+                pass
+            # 카운터 업데이트 및 반환
+            if "pullup" not in ExerciseAnalyzer._counters:
+                ExerciseAnalyzer._counters["pullup"] = PullupCounter()
+            inc, _ = ExerciseAnalyzer._counters["pullup"].update(lms, now)
+            return inc, None, None, fb
+
+        # ================================================== 2. SQUAT
+        if name == "squat":
+            try:
+                lh, rh = lms[23], lms[24]  # 양쪽 골반
+                lk, rk = lms[25], lms[26]  # 양쪽 무릎
+                la, ra = lms[27], lms[28]  # 양쪽 발목
+                lt, rt = lms[31], lms[32]  # 양쪽 발끝
+                # (1) 무릎 전방 이동 – 좌우 중 최대값 비교
+                fwd_l = (lk[0] - lt[0]) * S
+                fwd_r = (rk[0] - rt[0]) * S
+                if max(fwd_l, fwd_r) > ExerciseAnalyzer._TH["knee_toe_fwd"]:
+                    side = "왼쪽" if fwd_l > fwd_r else "오른쪽"
+                    fb.append(f"{side} 무릎이 발끝을 7 % 이상 넘음: 주의")
+                    Visualizer.add_bad_pose_point(lk if side == "왼쪽" else rk)
+                # (2) 골반 좌우 높이차
+                if abs(lh[1] - rh[1]) * S > ExerciseAnalyzer._TH["hip_imbalance"]:
+                    fb.append("골반 좌우 높이 차이 10 % 이상: 주의")
+                    Visualizer.add_bad_pose_point(lh); Visualizer.add_bad_pose_point(rh)
+                # (3) 상체 기울기
+                sh_c = ((lms[11][0] + lms[12][0]) // 2, (lms[11][1] + lms[12][1]) // 2)
+                hip_c = ((lh[0] + rh[0]) // 2, (lh[1] + rh[1]) // 2)
+                if Utils.angle_with_vertical(sh_c, hip_c) > 20:
+                    fb.append("상체가 너무 숙여짐: 주의")
+                    Visualizer.add_bad_pose_point(sh_c)
+                # 평균 무릎 각도로 카운트 판정
+                knee_ang = (Utils.get_angle(lh, lk, la) + Utils.get_angle(rh, rk, ra)) / 2
+            except Exception:
+                knee_ang = 180  # 예외 시 기본값
+            if "squat" not in ExerciseAnalyzer._counters:
+                ExerciseAnalyzer._counters["squat"] = RepCounter({'up': 170, 'down': 90}, {'min_time': 0.5, 'max_time': 3.0})
+            inc, tempo = ExerciseAnalyzer._counters["squat"].update(knee_ang, now)
+            return inc, tempo, None, fb
+
+        # ================================================== 3. LUNGE
+        if name == "lunge":
+            try:
+                lh, rh = lms[23], lms[24]
+                lk, rk = lms[25], lms[26]
+                la, ra = lms[27], lms[28]
+                lt, rt = lms[31], lms[32]
+                # 무릎 y 변화량 기록 (최근 5프레임)
+                for side, val in (("left", lk[1]), ("right", rk[1])):
+                    hist = ExerciseAnalyzer._lunge_knee_history[side]
+                    hist.append(val)
+                    if len(hist) > 5:
+                        hist.pop(0)
+                lv = max(ExerciseAnalyzer._lunge_knee_history["left"]) - min(ExerciseAnalyzer._lunge_knee_history["left"])
+                rv = max(ExerciseAnalyzer._lunge_knee_history["right"]) - min(ExerciseAnalyzer._lunge_knee_history["right"])
+                left_active = lv > rv  # 더 크게 움직인 쪽이 주동작 다리
+
+                knee, toe = (lk, lt) if left_active else (rk, rt)
+                hip_act, hip_opp = (lh, rh) if left_active else (rh, lh)
+                knee_ang = Utils.get_angle(hip_act, knee, la if left_active else ra)
+
+                print(f"knee[0]={knee[0]}, toe[0]={toe[0]}, S={S:.4f}, diff={(knee[0] - toe[0])}, scaled_diff={(knee[0] - toe[0]) * S:.4f}")
+
+                if (knee[0] > toe[0]) and ((knee[0] - toe[0]) * S > ExerciseAnalyzer._TH["knee_toe_fwd"]):
+                    fb.append(("왼쪽" if left_active else "오른쪽") + " 무릎이 발끝을 7 % 이상 넘음: 주의")
+                    Visualizer.add_bad_pose_point(knee)
+                # if abs(hip_act[1] - hip_opp[1]) * S > ExerciseAnalyzer._TH["hip_imbalance"]:
+                #     fb.append("골반 좌우 높이 차이 10 % 이상: 주의")
+                #     Visualizer.add_bad_pose_point(lh); Visualizer.add_bad_pose_point(rh)
+            except Exception:
+                knee_ang = 180
+            if "lunge" not in ExerciseAnalyzer._counters:
+                ExerciseAnalyzer._counters["lunge"] = RepCounter({'up': 150, 'down': 100}, {'min_time': 0.5, 'max_time': 3.0})
+            inc, tempo = ExerciseAnalyzer._counters["lunge"].update(knee_ang, now)
+            return inc, tempo, None, fb
+#=============== 4. BICEPS CURL ====================
+        if name == "biceps_curl":
+            try:
+                # 좌·우 어깨·팔꿈치·손목 좌표
+                pts = {
+                    "left":  (lms[11], lms[13], lms[15]),
+                    "right": (lms[12], lms[14], lms[16])
+                }
+                elbow_angles = []
+
+                for side, (sh, el, wr) in pts.items():
+                    # 팔꿈치 각도 계산
+                    ang = Utils.get_angle(sh, el, wr)
+                    elbow_angles.append(ang)
+
+                    # 팔꿈치 위치 변동(흔들림) 체크
+                    prev_el = ExerciseAnalyzer._prev_biceps_elbow[side]
+                    if prev_el is not None:
+                        move_ratio = np.linalg.norm(np.array(el) - np.array(prev_el)) * S
+                        if move_ratio > ExerciseAnalyzer._TH["joint_sway"]:
+                            fb.append(f"{side} 팔꿈치가 5 % 이상 이동: 고정 필요")
+                            Visualizer.add_bad_pose_point(el)
+                    ExerciseAnalyzer._prev_biceps_elbow[side] = el
+
+                    # 어깨 위치 변동(흔들림) 체크
+                    prev_sh = ExerciseAnalyzer._prev_biceps_shoulder[side]
+                    if prev_sh is not None:
+                        sh_move = np.linalg.norm(np.array(sh) - np.array(prev_sh)) * S
+                        if sh_move > ExerciseAnalyzer._TH["joint_sway"]:
+                            fb.append(f"상체가 5 % 이상 흔들림({side}): 고정 필요")
+                            Visualizer.add_bad_pose_point(sh)
+                    ExerciseAnalyzer._prev_biceps_shoulder[side] = sh
+
+                    # 팔꿈치 각도 피드백
+                    if ang < 40:
+                        fb.append(f"{side} 팔꿈치 각도: 너무 굽힘")
+                        Visualizer.add_bad_pose_point(el)
+                    elif ang > 160:
+                        fb.append(f"{side} 팔꿈치 각도: 너무 펴짐")
+                        Visualizer.add_bad_pose_point(el)
+                # 두 팔 평균 각도로 카운트 판정
+                avg_ang = sum(elbow_angles) / len(elbow_angles)
+            except Exception:
+                avg_ang = 180
+            if "biceps_curl" not in ExerciseAnalyzer._counters:
+                ExerciseAnalyzer._counters["biceps_curl"] = RepCounter({'up': 40, 'down': 160}, {'min_time': 1.0, 'max_time': 3.0})
+            inc, tempo = ExerciseAnalyzer._counters["biceps_curl"].update(avg_ang, now)
+            return inc, tempo, None, fb
+
+        #=============== 5. PUSH-UP ========================
+        if name == "pushup":
+            try:
+                # 주요 키포인트 추출
+                l_sh, l_el, l_wr = lms[11], lms[13], lms[15]
+                r_sh, r_el, r_wr = lms[12], lms[14], lms[16]
+                l_hip, r_hip = lms[23], lms[24]
+                l_ank, r_ank = lms[27], lms[28]
+
+                # (1) 어깨 좌우 높이차
+                if abs(l_sh[1] - r_sh[1]) * S > ExerciseAnalyzer._TH["shoulder_height"]:
+                    fb.append("어깨 높이 차이 8 % 이상: 주의")
+                    Visualizer.add_bad_pose_point(l_sh); Visualizer.add_bad_pose_point(r_sh)
+
+                # (2) 손목 위치 – 어깨 y좌표 차이
+                for side, wr, sh in (("왼", l_wr, l_sh), ("오른", r_wr, r_sh)):
+                    if abs(wr[1] - sh[1]) * S > ExerciseAnalyzer._TH["wrist_shoulder_y"]:
+                        fb.append(f"{side}손 위치가 어깨보다 15 % 이상 앞/뒤: 주의")
+                        Visualizer.add_bad_pose_point(wr)
+
+                # (3) 골반 sag/rise
+                hip_c = ((l_hip[0] + r_hip[0]) // 2, (l_hip[1] + r_hip[1]) // 2)
+                mid_y = (l_sh[1] + r_sh[1] + l_ank[1] + r_ank[1]) // 4
+                if abs(hip_c[1] - mid_y) * S > ExerciseAnalyzer._TH["hip_center_line"]:
+                    fb.append("엉덩이 들림/처짐 12 % 이상: 주의")
+                    Visualizer.add_bad_pose_point(hip_c)
+
+                # 평균 팔꿈치 각도로 카운트
+                ang = (Utils.get_angle(l_sh, l_el, l_wr) + Utils.get_angle(r_sh, r_el, r_wr)) / 2
+            except Exception:
+                ang = 180
+            if "pushup" not in ExerciseAnalyzer._counters:
+                ExerciseAnalyzer._counters["pushup"] = RepCounter({'up': 170, 'down': 80}, {'min_time': 0.5, 'max_time': 3.0})
+            inc, tempo = ExerciseAnalyzer._counters["pushup"].update(ang, now)
+            return inc, tempo, None, fb
         return 0, None, None, []
     
 # ========== EXERCISE (피드백 추가) ==========
