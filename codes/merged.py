@@ -232,6 +232,11 @@ class ExerciseAnalyzer:
         except Exception:
             return 1e-6
     # ────────── 메인 분석 함수 ──────────
+    _frame_feedback_buffer = []
+    _frame_exercise_state = []
+    _frame_counter = 0
+    _FEEDBACK_INTERVAL = 7
+
     @staticmethod
     def analyze_exercise(name, lms, now=None):
         fb = []
@@ -347,7 +352,7 @@ class ExerciseAnalyzer:
                     if lt[0] > rt[0]:
                         front_knee, front_ankle, front_hip, front_toe = lk, la, lh, lt
                         back_knee, back_ankle, back_hip, back_toe = rk, ra, rh, rt
-                        side = "왼쪽"
+                        side = "왼쪽"   
                     else:
                         front_knee, front_ankle, front_hip, front_toe = rk, ra, rh, rt
                         back_knee, back_ankle, back_hip, back_toe = lk, la, lh, lt
@@ -356,10 +361,19 @@ class ExerciseAnalyzer:
                 # === 발 간격 체크 ===
                 foot_gap = abs(lt[0] - rt[0])
                 hip_gap = abs(lh[0] - rh[0])
-                if hip_gap < 1e-6 or foot_gap < hip_gap * 1.2:
+                if feedback_frame_count%7 == 0 :
+                    print(f"발 간격: {foot_gap * S:.2f} % (골반 간격: {hip_gap * S:.2f} %)")
+
+                # ...existing code...
+                if foot_gap < hip_gap * 1.3:
                     fb.append("발 간격이 너무 좁음: 운동 중이 아닙니다.")
                     ExerciseAnalyzer._not_exercising_until[name] = now + 1.0
+                    if hasattr(ExerciseAnalyzer, "_spine_angle_feedback_frame_count"):
+                        ExerciseAnalyzer._spine_angle_feedback_frame_count = 0
+                    if hasattr(ExerciseAnalyzer, "_spine_angle_last_feedback_frame"):
+                        ExerciseAnalyzer._spine_angle_last_feedback_frame = -10
                     return 0, None, None, fb
+                # ...existing code...
 
                 # 운동 중이 아님 상태에서 1초 이내면 피드백 중단
                 until = ExerciseAnalyzer._not_exercising_until.get(name, 0)
@@ -387,7 +401,7 @@ class ExerciseAnalyzer:
                         # === 이동평균 및 outlier 처리 ===
                         history = ExerciseAnalyzer._spine_angle_history
                         outlier_until = ExerciseAnalyzer._spine_angle_outlier_until
-
+                        
                         # 히트맵 프레임 카운터 및 마지막 피드백 프레임
                         if not hasattr(ExerciseAnalyzer, "_spine_angle_feedback_frame_count"):
                             ExerciseAnalyzer._spine_angle_feedback_frame_count = 0
@@ -395,14 +409,16 @@ class ExerciseAnalyzer:
                             ExerciseAnalyzer._spine_angle_last_feedback_frame = -10
                         feedback_frame_count = ExerciseAnalyzer._spine_angle_feedback_frame_count
                         last_feedback_frame = ExerciseAnalyzer._spine_angle_last_feedback_frame
-
-                        # outlier 체크: 이전값과 30도 이상 차이면 5프레임 피드백 제외
+                        
+                        # 최근 7프레임 내에서 30도 이상 차이 발생 시 outlier 처리
                         is_outlier = False
-                        if history:
-                            prev = history[-1]
-                            if abs(angle_deg - prev) > 30:
+                        if len(history) >= 6:  # 7프레임 이상 쌓였을 때만 검사
+                            min_angle = min(history + [angle_deg])
+                            max_angle = max(history + [angle_deg])
+                            if abs(max_angle - min_angle) > 30:
                                 ExerciseAnalyzer._spine_angle_outlier_until = len(history) + 5
                                 is_outlier = True
+                        
                         # outlier 기간이면 피드백 X
                         if len(history) < ExerciseAnalyzer._spine_angle_outlier_until:
                             history.append(angle_deg)
@@ -413,7 +429,7 @@ class ExerciseAnalyzer:
                             if len(history) > 10:
                                 history.pop(0)
                             avg_angle = sum(history) / len(history)
-                            if feedback_frame_count % 5 == 0:
+                            if feedback_frame_count % 7 == 0:
                                 print(f"평균 척추각: {avg_angle:.2f}° (현재: {angle_deg:.2f}°)")
                             # 0~85도만 정상, 나머지는 무게중심 뒤로 경고
                             if not (5 <= avg_angle <= 90):
@@ -423,6 +439,7 @@ class ExerciseAnalyzer:
                                     Visualizer.add_bad_pose_point(hip_c)
                                     ExerciseAnalyzer._spine_angle_last_feedback_frame = feedback_frame_count
                             ExerciseAnalyzer._spine_angle_feedback_frame_count = feedback_frame_count + 1
+                        # ...existing code...
 
                 # 뒷발 무릎 각도 계산 (카운트 기준)
                 knee_ang = Utils.get_angle(back_hip, back_knee, back_ankle)
