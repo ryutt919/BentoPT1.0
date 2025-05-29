@@ -326,82 +326,79 @@ class ExerciseAnalyzer:
             return inc, tempo, None, fb
 
         # ================================================== 3. LUNGE
-        if name == "lunge":
+        if name == "lunge":  # 운동 이름이 런지일 때
             try:
-                lh, rh = lms[23], lms[24]
-                lk, rk = lms[25], lms[26]
-                la, ra = lms[27], lms[28]
-                lt, rt = lms[31], lms[32]
-                hip_center_x = (lh[0] + rh[0]) // 2
-
-                facing = ExerciseAnalyzer.get_facing_direction(lms)
-
-                # 앞발/뒷발 판별 (facing에 따라 기준 다름)
-                if facing < 0:
-                    # 왼쪽 바라봄: x가 더 작은 쪽이 앞발
-                    if lt[0] < rt[0]:
+                lh, rh = lms[23], lms[24]  # 왼/오 골반 좌표
+                lk, rk = lms[25], lms[26]  # 왼/오 무릎 좌표
+                la, ra = lms[27], lms[28]  # 왼/오 발목 좌표
+                lt, rt = lms[31], lms[32]  # 왼/오 발끝 좌표
+        
+                facing = ExerciseAnalyzer.get_facing_direction(lms)  # 시선 방향(좌/우) 판별
+        
+                # 앞발/뒷발 판별 (시선 방향에 따라)
+                if facing < 0:  # 왼쪽 바라볼 때
+                    if lt[0] < rt[0]:  # 왼발이 앞
                         front_knee, front_ankle, front_hip, front_toe = lk, la, lh, lt
                         back_knee, back_ankle, back_hip, back_toe = rk, ra, rh, rt
                         side = "왼쪽"
-                    else:
+                    else:  # 오른발이 앞
                         front_knee, front_ankle, front_hip, front_toe = rk, ra, rh, rt
                         back_knee, back_ankle, back_hip, back_toe = lk, la, lh, lt
                         side = "오른쪽"
-                else:
-                    # 오른쪽 바라봄: x가 더 큰 쪽이 앞발
-                    if lt[0] > rt[0]:
+                else:  # 오른쪽 바라볼 때
+                    if lt[0] > rt[0]:  # 왼발이 앞
                         front_knee, front_ankle, front_hip, front_toe = lk, la, lh, lt
                         back_knee, back_ankle, back_hip, back_toe = rk, ra, rh, rt
-                        side = "왼쪽"   
-                    else:
+                        side = "왼쪽"
+                    else:  # 오른발이 앞
                         front_knee, front_ankle, front_hip, front_toe = rk, ra, rh, rt
                         back_knee, back_ankle, back_hip, back_toe = lk, la, lh, lt
                         side = "오른쪽"
-
+        
                 # === 발 간격 체크 ===
-                foot_gap = abs(lt[0] - rt[0])
-                hip_gap = abs(lh[0] - rh[0])
-                if feedback_frame_count%7 == 0 :
+                foot_gap = abs(lt[0] - rt[0])  # 발끝 간 x좌표 차이
+                hip_gap = abs(lh[0] - rh[0])   # 골반 간 x좌표 차이
+                if feedback_frame_count % 7 == 0:  # 7프레임마다 로그 출력
                     print(f"발 간격: {foot_gap * S:.2f} % (골반 간격: {hip_gap * S:.2f} %)")
-
-                # ...existing code...
+        
+                # 발 간격이 너무 좁으면 운동 중 아님 처리
                 if foot_gap < hip_gap * 1.3:
+                    print(f"발 간격이 너무 좁음: {foot_gap :.2f} % < {hip_gap * 1.3:.2f} %")
                     fb.append("발 간격이 너무 좁음: 운동 중이 아닙니다.")
-                    ExerciseAnalyzer._not_exercising_until[name] = now + 1.0
+                    ExerciseAnalyzer._not_exercising_until[name] = now + 1.0  # 1초간 운동 중 아님
                     if hasattr(ExerciseAnalyzer, "_spine_angle_feedback_frame_count"):
-                        ExerciseAnalyzer._spine_angle_feedback_frame_count = 0
+                        ExerciseAnalyzer._spine_angle_feedback_frame_count = 0  # 척추각 피드백 카운터 초기화
                     if hasattr(ExerciseAnalyzer, "_spine_angle_last_feedback_frame"):
-                        ExerciseAnalyzer._spine_angle_last_feedback_frame = -10
-                    return 0, None, None, fb
-                # ...existing code...
-
+                        ExerciseAnalyzer._spine_angle_last_feedback_frame = -10  # 척추각 피드백 프레임 초기화
+                    return 0, None, None, fb  # 피드백 반환 후 함수 종료
+        
                 # 운동 중이 아님 상태에서 1초 이내면 피드백 중단
                 until = ExerciseAnalyzer._not_exercising_until.get(name, 0)
                 if now < until:
                     return 0, None, None, []
-
-                # 무릎이 발끝을 넘었는지 (앞발 기준)
+        
+                # 무릎이 발끝을 넘었는지(앞발 기준) 체크
                 if (front_knee[0] - front_toe[0]) * (1 if facing < 0 else -1) < 0:
                     fb.append(f"{side} 무릎이 발끝을 넘음: 주의")
                     Visualizer.add_bad_pose_point(front_knee)
-
+        
                 # === 척추-앞발 수직선 각도 기반 무게중심 피드백 ===
-                sh_c = PoseEstimator.get_shoulder_center(lms)
-                hip_c = PoseEstimator.get_hip_center(lms)
+                sh_c = PoseEstimator.get_shoulder_center(lms)  # 어깨 중심 좌표
+                hip_c = PoseEstimator.get_hip_center(lms)      # 골반 중심 좌표
                 if sh_c and hip_c:
-                    # 척추 벡터 (어깨중점 → 골반중점)
+                    # 척추 벡터 계산 (어깨중점 → 골반중점)
                     spine_vec = np.array([hip_c[0] - sh_c[0], hip_c[1] - sh_c[1]])
-                    vertical_vec = np.array([0, 1])
+                    vertical_vec = np.array([0, 1])  # 화면 수직 벡터
                     norm_spine = np.linalg.norm(spine_vec)
                     if norm_spine > 1e-6:
                         cos_val = np.dot(spine_vec, vertical_vec) / (norm_spine * np.linalg.norm(vertical_vec))
                         cos_val = np.clip(cos_val, -1.0, 1.0)
-                        angle_deg = np.degrees(np.arccos(cos_val))  # 0(수직)~180(반대수직)
-
+                        angle_deg = np.degrees(np.arccos(cos_val))  # 척추-수직선 각도(도)
+        
                         # === 이동평균 및 outlier 처리 ===
-                        history = ExerciseAnalyzer._spine_angle_history
-                        outlier_until = ExerciseAnalyzer._spine_angle_outlier_until
-                        
+                        history = ExerciseAnalyzer._spine_angle_history  # 척추각 히스토리
+                        outlier_until = ExerciseAnalyzer._spine_angle_outlier_until  # outlier 무시 기간
+        
                         # 히트맵 프레임 카운터 및 마지막 피드백 프레임
                         if not hasattr(ExerciseAnalyzer, "_spine_angle_feedback_frame_count"):
                             ExerciseAnalyzer._spine_angle_feedback_frame_count = 0
@@ -409,17 +406,17 @@ class ExerciseAnalyzer:
                             ExerciseAnalyzer._spine_angle_last_feedback_frame = -10
                         feedback_frame_count = ExerciseAnalyzer._spine_angle_feedback_frame_count
                         last_feedback_frame = ExerciseAnalyzer._spine_angle_last_feedback_frame
-                        
+        
                         # 최근 7프레임 내에서 30도 이상 차이 발생 시 outlier 처리
                         is_outlier = False
                         if len(history) >= 6:  # 7프레임 이상 쌓였을 때만 검사
                             min_angle = min(history + [angle_deg])
                             max_angle = max(history + [angle_deg])
                             if abs(max_angle - min_angle) > 30:
-                                ExerciseAnalyzer._spine_angle_outlier_until = len(history) + 5
+                                ExerciseAnalyzer._spine_angle_outlier_until = len(history) + 5  # 5프레임 outlier 무시
                                 is_outlier = True
-                        
-                        # outlier 기간이면 피드백 X
+        
+                        # outlier 기간이면 피드백 X, 아니면 피드백 생성
                         if len(history) < ExerciseAnalyzer._spine_angle_outlier_until:
                             history.append(angle_deg)
                             if len(history) > 10:
@@ -439,17 +436,16 @@ class ExerciseAnalyzer:
                                     Visualizer.add_bad_pose_point(hip_c)
                                     ExerciseAnalyzer._spine_angle_last_feedback_frame = feedback_frame_count
                             ExerciseAnalyzer._spine_angle_feedback_frame_count = feedback_frame_count + 1
-                        # ...existing code...
-
+        
                 # 뒷발 무릎 각도 계산 (카운트 기준)
                 knee_ang = Utils.get_angle(back_hip, back_knee, back_ankle)
-
+        
             except Exception:
-                knee_ang = 180
+                knee_ang = 180  # 예외 발생 시 기본값
             if "lunge" not in ExerciseAnalyzer._counters:
                 ExerciseAnalyzer._counters["lunge"] = RepCounter({'up': 150, 'down': 100}, {'min_time': 0.5, 'max_time': 3.0})
             inc, tempo = ExerciseAnalyzer._counters["lunge"].update(knee_ang, now)
-            return inc, tempo, None, fb
+            return inc, tempo, None, fb  # 카운트, 템포, 각도코드(None), 피드백 반환
 #=============== 4. BICEPS CURL ====================
         if name == "biceps_curl":
             try:
