@@ -243,8 +243,8 @@ class ExerciseAnalyzer:
         S = ExerciseAnalyzer._scale_factor(lms, name) or 1e-9
         if now is None:
             now = time.time()
-
-        # === 영상 시작 후 1초간 피드백 비활성화 ===
+            
+        # === 영상 시작 후 2초간 피드백 비활성화 ===
         if not hasattr(ExerciseAnalyzer, "_video_start_time"):
             ExerciseAnalyzer._video_start_time = now
         if now - ExerciseAnalyzer._video_start_time < 2.0:
@@ -358,25 +358,23 @@ class ExerciseAnalyzer:
                 # === 발 간격 체크 ===
                 foot_gap = abs(lt[0] - rt[0])  # 발끝 간 x좌표 차이
                 hip_gap = abs(lh[0] - rh[0])   # 골반 간 x좌표 차이
-                if feedback_frame_count % 7 == 0:  # 7프레임마다 로그 출력
-                    print(f"발 간격: {foot_gap * S:.2f} % (골반 간격: {hip_gap * S:.2f} %)")
         
                 # 발 간격이 너무 좁으면 운동 중 아님 처리
-                if foot_gap < hip_gap * 1.3:
+                if foot_gap < hip_gap * 6 :
                     print(f"발 간격이 너무 좁음: {foot_gap :.2f} % < {hip_gap * 1.3:.2f} %")
                     fb.append("발 간격이 너무 좁음: 운동 중이 아닙니다.")
-                    ExerciseAnalyzer._not_exercising_until[name] = now + 1.0  # 1초간 운동 중 아님
+                    ExerciseAnalyzer._not_exercising_until[name] = now + 2.0  # 1초간 운동 중 아님
                     if hasattr(ExerciseAnalyzer, "_spine_angle_feedback_frame_count"):
                         ExerciseAnalyzer._spine_angle_feedback_frame_count = 0  # 척추각 피드백 카운터 초기화
                     if hasattr(ExerciseAnalyzer, "_spine_angle_last_feedback_frame"):
                         ExerciseAnalyzer._spine_angle_last_feedback_frame = -10  # 척추각 피드백 프레임 초기화
                     return 0, None, None, fb  # 피드백 반환 후 함수 종료
-        
+
                 # 운동 중이 아님 상태에서 1초 이내면 피드백 중단
                 until = ExerciseAnalyzer._not_exercising_until.get(name, 0)
                 if now < until:
                     return 0, None, None, []
-        
+                        
                 # 무릎이 발끝을 넘었는지(앞발 기준) 체크
                 if (front_knee[0] - front_toe[0]) * (1 if facing < 0 else -1) < 0:
                     fb.append(f"{side} 무릎이 발끝을 넘음: 주의")
@@ -394,6 +392,7 @@ class ExerciseAnalyzer:
                         cos_val = np.dot(spine_vec, vertical_vec) / (norm_spine * np.linalg.norm(vertical_vec))
                         cos_val = np.clip(cos_val, -1.0, 1.0)
                         angle_deg = np.degrees(np.arccos(cos_val))  # 척추-수직선 각도(도)
+                    
         
                         # === 이동평균 및 outlier 처리 ===
                         history = ExerciseAnalyzer._spine_angle_history  # 척추각 히스토리
@@ -406,6 +405,7 @@ class ExerciseAnalyzer:
                             ExerciseAnalyzer._spine_angle_last_feedback_frame = -10
                         feedback_frame_count = ExerciseAnalyzer._spine_angle_feedback_frame_count
                         last_feedback_frame = ExerciseAnalyzer._spine_angle_last_feedback_frame
+                        
         
                         # 최근 7프레임 내에서 30도 이상 차이 발생 시 outlier 처리
                         is_outlier = False
@@ -441,11 +441,13 @@ class ExerciseAnalyzer:
                 knee_ang = Utils.get_angle(back_hip, back_knee, back_ankle)
         
             except Exception:
+                print("런지 분석 중 예외 발생:", str(Exception))
                 knee_ang = 180  # 예외 발생 시 기본값
             if "lunge" not in ExerciseAnalyzer._counters:
                 ExerciseAnalyzer._counters["lunge"] = RepCounter({'up': 150, 'down': 100}, {'min_time': 0.5, 'max_time': 3.0})
             inc, tempo = ExerciseAnalyzer._counters["lunge"].update(knee_ang, now)
             return inc, tempo, None, fb  # 카운트, 템포, 각도코드(None), 피드백 반환
+        
 #=============== 4. BICEPS CURL ====================
         if name == "biceps_curl":
             try:
@@ -813,6 +815,39 @@ class MainProgram:
     flipped = False
     recording = False
     writer = None
+    feedback_frame_indices = set()  # ★ 피드백 발생 프레임 기록용
+    
+    bar_width    = 600
+    bar_height   = 10
+    bar_margin   = 5
+    dragging     = False
+    cap          = None
+    total_frames = 0
+    disp_width   = 0
+    disp_height  = 0
+    
+
+    @staticmethod
+    def handle_mouse(event, x, y, flags, param):
+        y0 = MainProgram.disp_height - MainProgram.bar_height - MainProgram.bar_margin
+        y1 = y0 + MainProgram.bar_height
+
+        if event == cv.EVENT_LBUTTONDOWN:
+            if y0 <= y <= y1 and 0 <= x <= MainProgram.bar_width:
+                MainProgram.dragging = True
+                ratio = x / MainProgram.bar_width
+                MainProgram.cap.set(cv.CAP_PROP_POS_FRAMES,
+                                    int(ratio * MainProgram.total_frames))
+                # 프레임 기록
+                MainProgram.feedback_frame_indices.discard(int(ratio * MainProgram.total_frames))
+        elif event == cv.EVENT_MOUSEMOVE and MainProgram.dragging:
+            if y0 <= y <= y1 and 0 <= x <= MainProgram.bar_width:
+                ratio = x / MainProgram.bar_width
+                MainProgram.cap.set(cv.CAP_PROP_POS_FRAMES,
+                                    int(ratio * MainProgram.total_frames))
+        elif event == cv.EVENT_LBUTTONUP:
+            MainProgram.dragging = False
+
     @staticmethod
     def center_window(root, width, height):
         root.update_idletasks()
@@ -821,6 +856,7 @@ class MainProgram:
         x = (screen_w // 2) - (width // 2)
         y = (screen_h // 2) - (height // 2)
         root.geometry(f"{width}x{height}+{x}+{y}")
+
     @staticmethod
     def select_source():
         root = tk.Tk()
@@ -844,6 +880,7 @@ class MainProgram:
         root.mainloop()
         root.destroy()
         return choice['source']
+
     @staticmethod
     def select_exercise():
         root = tk.Tk()
@@ -862,6 +899,7 @@ class MainProgram:
         root.mainloop()
         root.destroy()
         return choice['exercise']
+
     @staticmethod
     def handle_keys(key, frame_size):
         w, h = frame_size
@@ -870,8 +908,7 @@ class MainProgram:
         elif key == 27: # ESC 키
             MainProgram.paused = False
             cv.destroyAllWindows()
-            exit()    
-                    
+            exit()
         elif key == ord(FLIP_KEY):
             MainProgram.flipped = not MainProgram.flipped
         elif key == ord(RECORD_KEY):
@@ -883,19 +920,25 @@ class MainProgram:
                 if MainProgram.writer is not None:
                     MainProgram.writer.release()
                     MainProgram.writer = None
+
     @staticmethod
     def save_record(exercise_name, count):
         now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         with open("exercise_log.csv", "a", newline='', encoding="utf-8") as f:
             writer = csv.writer(f)
             writer.writerow([now, exercise_name, count])
+
     @staticmethod
     def run():
+        feedback_bar =[]
         source = MainProgram.select_source()
         cap = cv.VideoCapture(source)
         if not cap.isOpened():
             print(f"Error: cannot open source {source}")
             return
+        MainProgram.cap = cap
+        MainProgram.total_frames = int(cap.get(cv.CAP_PROP_FRAME_COUNT))
+
         exercise_name = MainProgram.select_exercise()
         exercise = Exercise(exercise_name)
         width  = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
@@ -910,7 +953,6 @@ class MainProgram:
             disp_height = target_h
             disp_width = int(target_h * aspect)
 
-        # 화면 중앙 위치 계산 (tkinter 사용)
         root = tk.Tk()
         screen_w = root.winfo_screenwidth()
         screen_h = root.winfo_screenheight()
@@ -921,7 +963,10 @@ class MainProgram:
         cv.namedWindow('Pose Tracker', cv.WINDOW_NORMAL)
         cv.resizeWindow('Pose Tracker', disp_width, disp_height)
         cv.moveWindow('Pose Tracker', win_x, win_y)
+        MainProgram.disp_width, MainProgram.disp_height = disp_width, disp_height
+        cv.setMouseCallback('Pose Tracker', MainProgram.handle_mouse)
 
+        cap.set(cv.CAP_PROP_POS_FRAMES, 0)
         while cap.isOpened():
             ret, frame = cap.read()
             if not ret:
@@ -929,44 +974,60 @@ class MainProgram:
             if MainProgram.flipped:
                 frame = cv.flip(frame, 1)
 
-            # 프레임 리사이즈
             frame = cv.resize(frame, (disp_width, disp_height))
-
-        # === 가우시안 블러 적용 ===
             frame_blur = cv.GaussianBlur(frame, (5, 5), 0)
-
-            # 관절 추출 (블러 적용된 프레임 사용)
-            landmarks = PoseEstimator.get_pose_landmarks(frame_blur)            
+            landmarks = PoseEstimator.get_pose_landmarks(frame_blur)
             now = time.time()
             count, feedback_list = exercise.update(landmarks, now)
-            centers = {
-                'head':     PoseEstimator.get_head_center(landmarks),
-                'shoulder': PoseEstimator.get_shoulder_center(landmarks),
-                'hip':      PoseEstimator.get_hip_center(landmarks),
-                'spine':    PoseEstimator.estimate_spine(landmarks)
-            }
+            # 분석 및 시각화 로직
             Visualizer.draw_connections(frame, landmarks, CONNECTIONS_BASIC, THICKNESS)
             Visualizer.draw_perpendicular_lines(frame, landmarks, exercise_name=exercise_name)
-            Visualizer.draw_centers(frame, centers, THICKNESS)
+            Visualizer.draw_centers(frame, {
+                'head': PoseEstimator.get_head_center(landmarks),
+                'shoulder': PoseEstimator.get_shoulder_center(landmarks),
+                'hip': PoseEstimator.get_hip_center(landmarks),
+                'spine': PoseEstimator.estimate_spine(landmarks)
+            }, THICKNESS)
             Visualizer.draw_feedback(frame, feedback_list, thickness=THICKNESS)
             Visualizer.draw_bad_pose_heatmap(frame)
-            if exercise_name == 'squat' or exercise_name == 'pushup' or exercise_name == 'lunge' :
+            if exercise_name in ['squat', 'pushup', 'lunge']:
                 Visualizer.draw_connections(frame, landmarks, CONNECTIONS_LEG, THICKNESS)
             if MainProgram.recording and MainProgram.writer:
                 MainProgram.writer.write(frame)
+
+            cur_frame_idx = int(cap.get(cv.CAP_PROP_POS_FRAMES))
+            # 피드백 발생 시, 해당 프레임 위치에만 빨간 선 그리기
+
+
+            # ============ Playback Bar Drawing ============
+            h, w = frame.shape[:2]
+            y0 = h - MainProgram.bar_height - MainProgram.bar_margin
+            cv.rectangle(frame, (0, y0), (MainProgram.bar_width, h), (200, 200, 200), -1)
+            cur_frame = int(cap.get(cv.CAP_PROP_POS_FRAMES))
+            prog = int((cur_frame / MainProgram.total_frames) * MainProgram.bar_width)
+            cv.rectangle(frame, (0, y0), (prog, h), (100, 180, 255), -1)
+            if any("주의" in msg for msg in feedback_list):    
+                x = int((cur_frame_idx / MainProgram.total_frames) * MainProgram.bar_width)
+                y1 = y0
+                y2 = h
+                feedback_bar.append((x, y1, x, y2))
+            for x1, y1, x2, y2 in feedback_bar:
+                cv.line(frame, (x1, y1), (x2, y2), (0, 0, 255), 2)
+
+            # ==============================================
+
             cv.imshow('Pose Tracker', frame)
             key = cv.waitKey(1) & 0xFF
 
-            # === a/d로 앞뒤 이동 기능 추가 ===
-            if key in [ord('a'), ord('A')]:  # a: 뒤로 1.5초
+            if key in [ord('a'), ord('A')]:
                 fps = cap.get(cv.CAP_PROP_FPS) or 30
                 cur = cap.get(cv.CAP_PROP_POS_FRAMES)
                 cap.set(cv.CAP_PROP_POS_FRAMES, max(0, cur - int(fps * 1.5)))
                 continue
-            elif key in [ord('d'), ord('D')]:  # d: 앞으로 1.5초
+            elif key in [ord('d'), ord('D')]:
                 fps = cap.get(cv.CAP_PROP_FPS) or 30
-                cur = cap.get(cv.CAP_PROP_POS_FRAMES)
-                total = cap.get(cv.CAP_PROP_FRAME_COUNT)
+                cur = cap.get(cv.CAPROP_POS_FRAMES)
+                total = cap.get(cv.CAPROP_FRAME_COUNT)
                 cap.set(cv.CAP_PROP_POS_FRAMES, min(total-1, cur + int(fps * 1.5)))
                 continue
 
@@ -975,13 +1036,12 @@ class MainProgram:
                 break
             if MainProgram.paused:
                 MainProgram.handle_keys(cv.waitKey(), (disp_width, disp_height))
-                
+
         cap.release()
         if MainProgram.writer:
             MainProgram.writer.release()
         cv.destroyAllWindows()
-        MainProgram.save_record(exercise_name, exercise.total_count)  
-    
+        MainProgram.save_record(exercise_name, exercise.total_count)
     
               
 
