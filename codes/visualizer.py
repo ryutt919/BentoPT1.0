@@ -136,7 +136,7 @@ def validate_keypoints_in_directory(class_name):
     # 기본 경로 설정
     base_dir = r"C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400"
     video_dir = os.path.join(base_dir, "videos", class_name)
-    npz_dir = os.path.join(base_dir, "keypoints", class_name)
+    npz_dir = os.path.join(base_dir, "smoothed", class_name)
 
     # NPZ 파일 목록 가져오기
     npz_files = [f for f in os.listdir(npz_dir) if f.endswith('.npz')]

@@ -1,21 +1,20 @@
 import numpy as np
-from scipy.signal import medfilt
+from scipy.ndimage import median_filter
 import os
 from tqdm import tqdm
 
-# 1) NPZ 파일 로드 및 내부 확인
-npz_path = r"C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench pressing\bench_press (157).npz"
-dst_npz = r"C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench pressing\bench_press (157)2.npz"
+def fill_nan_with_neighbors(arr):
+    """선/후행 유효값으로 NaN을 보간"""
+    n = len(arr)
+    idx = np.arange(n)
+    mask = np.isnan(arr)
+    if mask.all():
+        return np.zeros_like(arr)
+    arr[mask] = np.interp(idx[mask], idx[~mask], arr[~mask])
+    return arr
 
-data = np.load(npz_path, allow_pickle=True)
-print("Archive contains:", data.files)
 
-# keypoints 배열 가져오기 (shape = (T, K, 3))
-kp = data["keypoints"]
-print("Archive shape:", kp.shape)  # e.g., (26, 13, 3)
-
-# 2) Median 필터 함수 정의
-def median_smooth_keypoints(kp_array, kernel_size=5):
+def median_smooth_keypoints(kp_array, kernel_size=7):
     """
     kp_array: np.ndarray, shape = (T, K, 3)
       - T: 시퀀스 길이
@@ -29,15 +28,19 @@ def median_smooth_keypoints(kp_array, kernel_size=5):
 
     # 각 관절별로 독립적으로 필터 적용
     for k in range(K):
-        # x 좌표 시퀀스
-        xs = kp_array[:, k, 0]  # shape = (T,)
-        xs = np.nan_to_num(xs, nan=np.nanmean(xs))
-        xs_med = medfilt(xs, kernel_size=kernel_size)
-        
-        # y 좌표 시퀀스
-        ys = kp_array[:, k, 1]  # shape = (T,)
-        ys = np.nan_to_num(ys, nan=np.nanmean(ys))
-        ys_med = medfilt(ys, kernel_size=kernel_size)
+        xs = kp_array[:, k, 0].astype(float)
+        ys = kp_array[:, k, 1].astype(float)
+        conf = kp_array[:, k, 2]
+
+        xs[conf <= 0] = np.nan
+        ys[conf <= 0] = np.nan
+
+        xs = fill_nan_with_neighbors(xs)
+        ys = fill_nan_with_neighbors(ys)
+
+        xs_med = median_filter(xs, size=kernel_size, mode="nearest")
+        ys_med = median_filter(ys, size=kernel_size, mode="nearest")
+
         
         # 필터링된 결과 저장
         smoothed[:, k, 0] = xs_med
@@ -45,21 +48,6 @@ def median_smooth_keypoints(kp_array, kernel_size=5):
 
     return smoothed
 
-# 3) Median 필터 적용 (kernel_size=5 기준)
-kp_smoothed = median_smooth_keypoints(kp, kernel_size=7)
-
-# 4) 나머지 메타데이터 그대로 유지하면서 새 npz로 저장
-np.savez_compressed(
-    dst_npz,
-    frame_numbers=data["frame_numbers"],
-    timestamps=data["timestamps"],
-    person_ids=data["person_ids"],
-    keypoints=kp_smoothed,
-    keypoint_names=data["keypoint_names"],
-    video_info=data["video_info"]  # allow_pickle=True로 불러왔으니 이대로 저장 가능
-)
-
-print(f"Smoothed keypoints saved to: {dst_npz}")
 
 def process_all_keypoints():
     # 기본 경로 설정
