@@ -7,32 +7,47 @@ from datetime import datetime
 from tqdm import tqdm
 import multiprocessing as mp
 from functools import partial
+import logging
+
+# -----------------------------------
+# 1. 전역 모델 로딩 (한 번만)
+# -----------------------------------
+DETECT_MODEL = YOLO('yolov8x.pt')
+POSE_MODEL   = YOLO('yolov8x-pose.pt')
+DETECT_MODEL.verbose = False
+POSE_MODEL.verbose   = False
+
+# -----------------------------------
+# 2. 로깅 설정
+# -----------------------------------
+logging.basicConfig(
+    filename='app.log',
+    filemode='a',  
+    format='%(asctime)s %(levelname)s: %(message)s',
+    level=logging.INFO
+)
+
 
 def process_video(video_path, class_name, file_count, frame_interval=3):
     """비디오에서 사람을 감지하고 포즈를 추정하여 키포인트 데이터만 저장"""
     # NPZ 파일 경로 확인
-    output_dir = os.path.join(r'C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints', class_name)
+    output_dir = os.path.join(
+        r'C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints',
+        class_name
+    )
     video_filename = os.path.basename(video_path)
     npz_filename = os.path.splitext(video_filename)[0] + '.npz'
     npz_output_path = os.path.join(output_dir, npz_filename)
     
     # 이미 처리된 파일이면 건너뛰기
     if os.path.exists(npz_output_path):
-        print(f"\nSkipping {video_filename} - NPZ file already exists")
+        logging.info(f"Skipping {video_filename} - NPZ file already exists")
         return
 
-    # YOLO 모델 로드
-    detect_model = YOLO('yolov8x.pt')  # 객체 감지용
-    pose_model = YOLO('yolov8x-pose.pt')  # 포즈 추정용
-    
-    # YOLO 출력 완전히 비활성화
-    detect_model.verbose = False
-    pose_model.verbose = False
-    
     # 비디오 캡처 설정
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
-        print(f"Error: Cannot open video file {video_path}")
+        logging.error(f"Cannot open video file {video_path}")
         return
         
     # 비디오 정보 가져오기
@@ -94,11 +109,11 @@ def process_video(video_path, class_name, file_count, frame_interval=3):
             break
         
         # 사람 감지
-        detect_results = detect_model(frame, classes=[0], conf=0.5, verbose=False)[0]
+        detect_results = DETECT_MODEL(frame, classes=[0], conf=0.5, verbose=False)[0]
         
         # 두 명 이상이 감지되면 이 영상은 건너뛰기
         if len(detect_results.boxes) > 1:
-            print(f"\nSkipping {video_filename} - Multiple people detected ({len(detect_results.boxes)} people)")
+            logging.info(f"Skipping {video_filename} - Multiple people detected ({len(detect_results.boxes)} people)")
             cap.release()
             return
             
@@ -107,7 +122,7 @@ def process_video(video_path, class_name, file_count, frame_interval=3):
             continue
         
         # 감지된 사람의 포즈 추정
-        pose_results = pose_model(frame, conf=0.5, verbose=False)[0]
+        pose_results = POSE_MODEL(frame, conf=0.5, verbose=False)[0]
         
         if pose_results.keypoints is not None:
             # numpy 배열로 변환
@@ -135,13 +150,7 @@ def process_video(video_path, class_name, file_count, frame_interval=3):
     # 키포인트 데이터를 NPZ 파일로 저장
     if keypoints_data:
         # 저장 경로 설정
-        output_dir = os.path.join(r'C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints', class_name)
         os.makedirs(output_dir, exist_ok=True)
-        
-        # 파일명에서 .mp4 확장자를 제거하고 .npz로 변경
-        video_filename = os.path.basename(video_path)
-        npz_filename = os.path.splitext(video_filename)[0] + '.npz'
-        npz_output_path = os.path.join(output_dir, npz_filename)
         
         np.savez_compressed(
             npz_output_path,
@@ -149,7 +158,7 @@ def process_video(video_path, class_name, file_count, frame_interval=3):
             timestamps=np.array(timestamps),
             person_ids=np.array(person_ids),
             keypoints=np.array(keypoints_data),
-            keypoint_names=KEYPOINT_NAMES,
+            keypoint_names=np.array(KEYPOINT_NAMES),
             video_info=np.array([
                 os.path.basename(video_path),
                 str(fps),
@@ -159,10 +168,9 @@ def process_video(video_path, class_name, file_count, frame_interval=3):
                 str(frame_interval)
             ], dtype=object)
         )
-        print(f"\nKeypoints data saved to: {npz_output_path}")
-        print(f"Processed frames: {len(frame_numbers)}, Frame interval: {frame_interval}")
+        logging.info(f"Keypoints data saved to: {npz_output_path} ({len(frame_numbers)} frames)")
     else:
-        print("\nNo valid keypoints detected in the video.")
+        logging.warning(f"No valid keypoints detected in {video_filename}")
 
 def process_class_videos(class_name, video_dir):
     """한 클래스의 비디오들을 처리"""
@@ -178,7 +186,7 @@ def process_class_videos(class_name, video_dir):
 def main():
     video_dir = r'C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\videos'
     class_names = [d for d in os.listdir(video_dir) if os.path.isdir(os.path.join(video_dir, d))]
-    print(f"총 {len(class_names)}개 클래스 처리 예정")
+    logging.info(f"총 {len(class_names)}개 클래스 처리 예정")
     
     # 전체 처리해야 할 비디오 파일 수 계산 (이미 처리된 파일 제외)
     total_videos = 0
@@ -189,20 +197,27 @@ def main():
         total_videos += len(video_files)
         
         # 이미 처리된 파일 확인
-        output_dir = os.path.join(r'C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints', class_name)
+        output_dir = os.path.join(
+            r'C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints',
+            class_name
+        )
         for video_file in video_files:
             npz_file = os.path.splitext(video_file)[0] + '.npz'
             npz_path = os.path.join(output_dir, npz_file)
             if not os.path.exists(npz_path):
                 remaining_videos += 1
     
+    logging.info(f"총 비디오 파일 수: {total_videos}")
+    logging.info(f"이미 처리된 파일 수: {total_videos - remaining_videos}")
+    logging.info(f"처리해야 할 파일 수: {remaining_videos}")
+
     print(f"총 비디오 파일 수: {total_videos}")
     print(f"이미 처리된 파일 수: {total_videos - remaining_videos}")
     print(f"처리해야 할 파일 수: {remaining_videos}")
     
     # 2개의 프로세스 사용
     num_processes = 2
-    print(f"사용할 CPU 코어 수: {num_processes}")
+    logging.info(f"사용할 CPU 코어 수: {num_processes}")
     
     # 멀티프로세싱 풀 생성
     pool = mp.Pool(processes=num_processes)
@@ -218,4 +233,4 @@ def main():
 if __name__ == "__main__":
     # Windows에서 멀티프로세싱 사용 시 필요한 보호 코드
     mp.freeze_support()
-    main() 
+    main()
