@@ -176,5 +176,5 @@ def validate_keypoints_in_directory(class_name):
 
 if __name__ == "__main__":
     # 특정 클래스의 모든 NPZ 파일 검증
-    validate_keypoints_in_directory("pull ups")
+    validate_keypoints_in_directory("bench pressing")
                  

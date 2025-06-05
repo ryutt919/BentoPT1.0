@@ -8,7 +8,7 @@ from tqdm import tqdm
 import multiprocessing as mp
 from functools import partial
 
-def process_video(video_path, class_name, file_count, frame_interval=5):
+def process_video(video_path, class_name, file_count, frame_interval=3):
     """비디오에서 사람을 감지하고 포즈를 추정하여 키포인트 데이터만 저장"""
     # NPZ 파일 경로 확인
     output_dir = os.path.join(r'C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints', class_name)
@@ -96,98 +96,39 @@ def process_video(video_path, class_name, file_count, frame_interval=5):
         # 사람 감지
         detect_results = detect_model(frame, classes=[0], conf=0.5, verbose=False)[0]
         
-        # 감지된 사람들의 포즈 추정
+        # 두 명 이상이 감지되면 이 영상은 건너뛰기
+        if len(detect_results.boxes) > 1:
+            print(f"\nSkipping {video_filename} - Multiple people detected ({len(detect_results.boxes)} people)")
+            cap.release()
+            return
+            
+        # 감지된 사람이 없으면 다음 프레임으로
+        if len(detect_results.boxes) == 0:
+            continue
+        
+        # 감지된 사람의 포즈 추정
         pose_results = pose_model(frame, conf=0.5, verbose=False)[0]
         
-        if len(detect_results.boxes) > 0 and pose_results.keypoints is not None:
+        if pose_results.keypoints is not None:
             # numpy 배열로 변환
             kpts = pose_results.keypoints.data.cpu().numpy()
+            keypoints = kpts[0]  # 한 명만 있으므로 첫 번째 사람의 키포인트
             
-            # 각 감지된 사람에 대해
-            for i, (box, keypoints) in enumerate(zip(detect_results.boxes, kpts)):
-                # 바운딩 박스 좌표
-                x1, y1, x2, y2 = map(int, box.xyxy[0])
-                
-                # 트래킹 ID 할당
-                if i not in person_tracks:
-                    person_tracks[i] = {
-                        'box_history': [],
-                        'keypoint_history': [],
-                        'is_exercising': False,
-                        'exercise_confidence': 0.0,
-                        'last_frame': frame_count - frame_interval
-                    }
-                
-                # 이전 프레임과의 간격이 너무 큰 경우 히스토리 초기화
-                if frame_count - person_tracks[i]['last_frame'] > frame_interval * 2:
-                    person_tracks[i]['box_history'] = []
-                    person_tracks[i]['keypoint_history'] = []
-                    person_tracks[i]['exercise_confidence'] = 0.0
-                
-                # 박스와 키포인트 히스토리 업데이트
-                person_tracks[i]['box_history'].append([x1, y1, x2, y2])
-                person_tracks[i]['keypoint_history'].append(keypoints)
-                person_tracks[i]['last_frame'] = frame_count
-                
-                # 히스토리 크기 제한
-                max_history = 6
-                if len(person_tracks[i]['box_history']) > max_history:
-                    person_tracks[i]['box_history'].pop(0)
-                    person_tracks[i]['keypoint_history'].pop(0)
-                
-                # 운동 여부 판단
-                if len(person_tracks[i]['keypoint_history']) > 2:
-                    total_movement = 0.0
-                    valid_keypoints = 0
-                    
-                    # 모든 주요 관절의 움직임 분석
-                    for kp_name, kp_idx in EXERCISE_KEYPOINTS.items():
-                        # 키포인트 유효성 검사 추가
-                        if (kp_idx < len(keypoints) and 
-                            kp_idx < len(person_tracks[i]['keypoint_history'][0]) and
-                            len(keypoints[kp_idx]) >= 3 and 
-                            len(person_tracks[i]['keypoint_history'][0][kp_idx]) >= 3 and
-                            keypoints[kp_idx][2] > 0.5 and  # 현재 프레임의 신뢰도
-                            person_tracks[i]['keypoint_history'][0][kp_idx][2] > 0.5):  # 이전 프레임의 신뢰도
-                            # 관절의 이동 거리 계산
-                            movement = np.linalg.norm(
-                                person_tracks[i]['keypoint_history'][-1][kp_idx][:2] -
-                                person_tracks[i]['keypoint_history'][0][kp_idx][:2]
-                            )
-                            total_movement += movement
-                            valid_keypoints += 1
-                    
-                    # 유효한 관절이 있는 경우에만 평균 움직임 계산
-                    if valid_keypoints > 0:
-                        avg_movement = total_movement / valid_keypoints
-                        
-                        # 운동 여부 판단을 위한 임계값
-                        threshold = 15.0
-                        confidence_update = 0.3 if avg_movement > threshold else -0.2
-                        
-                        # 운동 신뢰도 업데이트
-                        person_tracks[i]['exercise_confidence'] = max(0.0, min(1.0,
-                            person_tracks[i]['exercise_confidence'] + confidence_update))
-                        
-                        # 최종 운동 여부 결정
-                        person_tracks[i]['is_exercising'] = person_tracks[i]['exercise_confidence'] > 0.6
-                
-                # 운동 중인 경우 키포인트 저장
-                if person_tracks[i]['is_exercising']:
-                    current_keypoints = np.zeros((len(SELECTED_KEYPOINTS), 3))
-                    for idx, (kp_name, yolo_idx) in enumerate(SELECTED_KEYPOINTS.items()):
-                        if yolo_idx < len(keypoints):
-                            kp = keypoints[yolo_idx]
-                            if not np.any(np.isnan(kp)):
-                                x, y, conf = kp
-                                if conf > 0.5:
-                                    current_keypoints[idx] = [x, y, conf]
-                    
-                    if np.any(current_keypoints[:, 2] > 0.5):
-                        frame_numbers.append(frame_count)
-                        timestamps.append(frame_count / fps)
-                        person_ids.append(i)
-                        keypoints_data.append(current_keypoints)
+            # 현재 프레임의 키포인트 저장
+            current_keypoints = np.zeros((len(SELECTED_KEYPOINTS), 3))
+            for idx, (kp_name, yolo_idx) in enumerate(SELECTED_KEYPOINTS.items()):
+                if yolo_idx < len(keypoints):
+                    kp = keypoints[yolo_idx]
+                    if not np.any(np.isnan(kp)):
+                        x, y, conf = kp
+                        if conf > 0.5:
+                            current_keypoints[idx] = [x, y, conf]
+            
+            if np.any(current_keypoints[:, 2] > 0.5):
+                frame_numbers.append(frame_count)
+                timestamps.append(frame_count / fps)
+                person_ids.append(0)  # 항상 ID는 0으로 설정 (한 명만 처리하므로)
+                keypoints_data.append(current_keypoints)
     
     cap.release()
     
@@ -221,7 +162,7 @@ def process_video(video_path, class_name, file_count, frame_interval=5):
         print(f"\nKeypoints data saved to: {npz_output_path}")
         print(f"Processed frames: {len(frame_numbers)}, Frame interval: {frame_interval}")
     else:
-        print("\nNo exercise movements detected in the video.")
+        print("\nNo valid keypoints detected in the video.")
 
 def process_class_videos(class_name, video_dir):
     """한 클래스의 비디오들을 처리"""
@@ -232,7 +173,7 @@ def process_class_videos(class_name, video_dir):
     video_files = [f for f in os.listdir(class_dir) if f.endswith('.mp4')]
     for file_count, filename in enumerate(video_files, 1):
         video_path = os.path.join(class_dir, filename)
-        process_video(video_path, class_name, file_count, frame_interval=5)
+        process_video(video_path, class_name, file_count, frame_interval=3)
 
 def main():
     video_dir = r'C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\videos'
