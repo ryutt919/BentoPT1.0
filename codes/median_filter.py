@@ -15,6 +15,17 @@ kp = data["keypoints"]
 print("Archive shape:", kp.shape)  # e.g., (26, 13, 3)
 
 # 2) Median 필터 함수 정의
+def fill_nan_with_neighbors(arr):
+    """선/후행 유효값으로 NaN을 보간"""
+    n = len(arr)
+    idx = np.arange(n)
+    mask = np.isnan(arr)
+    if mask.all():
+        return np.zeros_like(arr)
+    arr[mask] = np.interp(idx[mask], idx[~mask], arr[~mask])
+    return arr
+
+
 def median_smooth_keypoints(kp_array, kernel_size=5):
     """
     kp_array: np.ndarray, shape = (T, K, 3)
@@ -27,19 +38,20 @@ def median_smooth_keypoints(kp_array, kernel_size=5):
     T, K, _ = kp_array.shape
     smoothed = kp_array.copy()
 
-    # 각 관절별로 독립적으로 필터 적용
     for k in range(K):
-        # x 좌표 시퀀스
-        xs = kp_array[:, k, 0]  # shape = (T,)
-        xs = np.nan_to_num(xs, nan=np.nanmean(xs))
+        xs = kp_array[:, k, 0].astype(float)
+        ys = kp_array[:, k, 1].astype(float)
+        conf = kp_array[:, k, 2]
+
+        xs[conf <= 0] = np.nan
+        ys[conf <= 0] = np.nan
+
+        xs = fill_nan_with_neighbors(xs)
+        ys = fill_nan_with_neighbors(ys)
+
         xs_med = median_filter(xs, size=kernel_size, mode="nearest")
-        
-        # y 좌표 시퀀스
-        ys = kp_array[:, k, 1]  # shape = (T,)
-        ys = np.nan_to_num(ys, nan=np.nanmean(ys))
         ys_med = median_filter(ys, size=kernel_size, mode="nearest")
-        
-        # 필터링된 결과 저장
+
         smoothed[:, k, 0] = xs_med
         smoothed[:, k, 1] = ys_med
 
