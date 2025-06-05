@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.signal import medfilt
+from scipy.ndimage import median_filter
 import os
 from tqdm import tqdm
 
@@ -32,12 +32,12 @@ def median_smooth_keypoints(kp_array, kernel_size=5):
         # x 좌표 시퀀스
         xs = kp_array[:, k, 0]  # shape = (T,)
         xs = np.nan_to_num(xs, nan=np.nanmean(xs))
-        xs_med = medfilt(xs, kernel_size=kernel_size)
+        xs_med = median_filter(xs, size=kernel_size, mode="nearest")
         
         # y 좌표 시퀀스
         ys = kp_array[:, k, 1]  # shape = (T,)
         ys = np.nan_to_num(ys, nan=np.nanmean(ys))
-        ys_med = medfilt(ys, kernel_size=kernel_size)
+        ys_med = median_filter(ys, size=kernel_size, mode="nearest")
         
         # 필터링된 결과 저장
         smoothed[:, k, 0] = xs_med
