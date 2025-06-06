@@ -1,79 +1,51 @@
 import os
-from pathlib import Path
-from datetime import datetime
-import tensorflow as tf
-import webbrowser
 import subprocess
-import time
-import signal
-import sys
 
-def find_latest_tensorboard_dir():
-    """가장 최근의 텐서보드 로그 디렉토리 찾기"""
-    base_dir = Path(r"C:\Users\user\Desktop\TermP\mmaction2\work_dirs\custom_stgcnpp")
-    
-    # 날짜_시간 형식의 디렉토리 찾기
-    exp_dirs = []
-    for d in base_dir.iterdir():
-        if d.is_dir() and len(d.name) == 15 and d.name[0].isdigit():  # YYYYMMDD_HHMMSS 형식 체크
-            try:
-                datetime.strptime(d.name, "%Y%m%d_%H%M%S")
-                exp_dirs.append(d)
-            except ValueError:
-                continue
-    
-    if not exp_dirs:
-        raise FileNotFoundError("텐서보드 로그 디렉토리를 찾을 수 없습니다.")
-    
-    # 가장 최근 디렉토리 찾기
-    latest_dir = max(exp_dirs, key=lambda x: datetime.strptime(x.name, "%Y%m%d_%H%M%S"))
-    return latest_dir
+def launch_latest_tensorboard():
+    # 1) 작업 디렉터리(학습 결과가 들어있는) 경로
+    base_dir = r"C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\work_dirs\custom_stgcnpp"
 
-def start_tensorboard(logdir, port=6006):
-    """텐서보드 서버 시작"""
-    print(f"텐서보드 시작 중... (로그 디렉토리: {logdir})")
-    
-    # 이미 실행 중인 텐서보드 프로세스 종료
-    if sys.platform == 'win32':
-        os.system('taskkill /f /im "tensorboard.exe" 2>nul')
-    else:
-        os.system('pkill -f "tensorboard"')
-    
-    # 새로운 텐서보드 프로세스 시작
-    cmd = f"tensorboard --logdir={logdir} --port={port}"
-    process = subprocess.Popen(cmd, shell=True)
-    
-    # 서버가 시작될 때까지 잠시 대기
-    time.sleep(3)
-    
-    # 브라우저에서 텐서보드 열기
-    url = f"http://localhost:{port}"
-    print(f"텐서보드 URL: {url}")
-    webbrowser.open(url)
-    
-    return process
+    # 2) base_dir 아래 있는 모든 하위 폴더를 가져와서, 디렉터리인 것만 필터링
+    #    (폴더 이름 예: "20250607_022504" 같은 타임스탬프 형식)
+    all_subdirs = [
+        d for d in os.listdir(base_dir)
+        if os.path.isdir(os.path.join(base_dir, d))
+    ]
 
-def main():
+    if not all_subdirs:
+        print(f"[오류] '{base_dir}' 경로에 하위 폴더가 없습니다.")
+        return
+
+    # 3) 폴더 이름을 문자열 비교로 정렬하면, 타임스탬프 형식(YYYYMMDD_HHMMSS)이므로 가장 마지막 항목이 최신임
+    all_subdirs.sort()
+    latest_name = all_subdirs[-1]  # 가장 뒤에 오는(가장 큰) 이름
+
+    # 4) 최신 디렉터리 전체 경로
+    latest_dir = os.path.join(base_dir, latest_name)
+
+    # 5) TensorBoard를 실행할 때 사용할 logdir을 지정
+    #    보통 mmaction2나 PyTorch 학습 스크립트를 돌리면, 해당 위치에 이벤트 파일(events.out.tfevents.*)이 생성됨
+    logdir = latest_dir
+
+    # 6) TensorBoard 명령어 구성 (포트는 필요에 따라 변경 가능)
+    tb_command = [
+        "tensorboard",
+        f"--logdir={logdir}",
+        "--port=6006"
+    ]
+
+    # 7) 콘솔 출력으로 어느 경로를 잡았는지 확인
+    print(f"[INFO] 최신 학습 로그 디렉터리: {latest_dir}")
+    print(f"[INFO] 다음 명령어로 TensorBoard 실행:")
+    print("       " + " ".join(tb_command))
+
+    # 8) TensorBoard 서버를 백그라운드로 실행
     try:
-        # 최신 텐서보드 로그 디렉토리 찾기
-        log_dir = find_latest_tensorboard_dir()
-        print(f"최신 실험 디렉토리: {log_dir}")
-        
-        # 텐서보드 시작
-        tensorboard_process = start_tensorboard(log_dir)
-        
-        print("\n텐서보드가 실행 중입니다...")
-        print("종료하려면 Ctrl+C를 누르세요.")
-        
-        # 프로세스가 실행 중일 때까지 대기
-        try:
-            tensorboard_process.wait()
-        except KeyboardInterrupt:
-            print("\n텐서보드를 종료합니다...")
-            tensorboard_process.terminate()
-            
+        # Linux/macOS는 shell=False 권장, Windows도 동일
+        tb_proc = subprocess.Popen(tb_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        print(f"[INFO] TensorBoard 프로세스 시작 (PID: {tb_proc.pid})")
     except Exception as e:
-        print(f"에러 발생: {str(e)}")
+        print(f"[오류] TensorBoard 실행 중 예외 발생:\n{e}")
 
-if __name__ == '__main__':
-    main() 
+if __name__ == "__main__":
+    launch_latest_tensorboard()
