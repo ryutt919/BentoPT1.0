@@ -7,6 +7,8 @@ from mmengine.runner import Runner
 from mmaction.apis import init_recognizer
 from sklearn.preprocessing import LabelEncoder
 from torch.utils.tensorboard import SummaryWriter
+from mmengine.evaluator import Evaluator
+from mmaction.evaluation import AccMetric
 
 # TensorBoard writer
 writer = SummaryWriter('runs/stgcn_experiment')
@@ -17,7 +19,7 @@ class MultiCSVPoseDataset(Dataset):
         self.samples = []
         self.label_encoder = label_encoder
         self.transform = transform
-        self.window_size = 100  # 100프레임으로 변경
+        self.window_size = 32  # 32프레임으로 변경
 
         npz_dir = os.path.join(base_dir, 'normalized', class_name)
         labels_dir = os.path.join(base_dir, 'labels', class_name)
@@ -50,8 +52,8 @@ class MultiCSVPoseDataset(Dataset):
                 except Exception as e:
                     print(f"Warning: Error processing file {csv_path}: {e}")
 
-            # 시퀀스를 windows로 나누기 (100프레임씩)
-            stride = 50  # 절반씩 겹치도록
+            # 시퀀스를 windows로 나누기 (32프레임씩)
+            stride = 16  # 스트라이드도 절반으로 조정
             
             for start_idx in range(0, len(frame_numbers), stride):
                 end_idx = start_idx + self.window_size
@@ -141,8 +143,20 @@ class TensorBoardCallback:
 
 def main():
     # 설정 파일 로드
-    cfg = Config.fromfile('mmaction2/configs/skeleton/stgcn/stgcn_8xb16-joint-u100-80e_ntu60-xsub-keypoint-2d.py')
-      # 데이터셋 준비
+    cfg = Config.fromfile('mmaction2/configs/skeleton/stgcnpp/stgcnpp_8xb16-joint-u100-80e_ntu60-xsub-keypoint-2d.py')
+    
+    # 모델 설정 수정
+    cfg.model.cls_head.num_classes = 14  # unlabeled + 13 자세 라벨
+    
+    # 학습 설정 수정
+    cfg.train_cfg.max_epochs = 50  # 에포크 수 증가
+    cfg.train_dataloader.batch_size = 32  # 배치 사이즈 조정
+    cfg.val_dataloader.batch_size = 32
+    
+    # 옵티마이저 설정 수정
+    cfg.optim_wrapper.optimizer.lr = 0.01  # 학습률 조정
+    
+    # 데이터셋 준비
     label_encoder = LabelEncoder()
     label_encoder.fit(['unlabeled', 'outlier', 'good', 'elbow_not_vertical', 'hand_position_bad',
                       'elbow_flare', 'wrist_bent', 'shoulder_raise', 'grip_unstable',
@@ -195,7 +209,8 @@ def main():
         optim_wrapper=cfg.optim_wrapper,
         param_scheduler=cfg.param_scheduler,
         default_hooks=cfg.default_hooks,
-        default_scope='mmaction'
+        default_scope='mmaction',
+        val_evaluator=dict(type='AccMetric')  # 검증 평가기 추가
     )
     
     # TensorBoard 콜백 추가
