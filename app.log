@@ -628,3 +628,619 @@
 2025-06-06 03:16:47,622 INFO: Skipping squat (97).mp4 - Multiple people detected (3 people)
 2025-06-06 03:16:58,908 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\squat\squat (98).npz (100 frames)
 2025-06-06 03:16:58,974 INFO: Skipping squat (99).mp4 - Multiple people detected (2 people)
+2025-06-06 04:46:02,753 INFO: 총 5개 클래스 처리 예정
+2025-06-06 04:46:02,832 INFO: 총 비디오 파일 수: 606
+2025-06-06 04:46:02,832 INFO: 이미 처리된 파일 수: 181
+2025-06-06 04:46:02,832 INFO: 처리해야 할 파일 수: 425
+2025-06-06 04:46:02,833 INFO: 사용할 CPU 코어 수: 2
+2025-06-06 04:46:56,353 INFO: 총 5개 클래스 처리 예정
+2025-06-06 04:46:56,444 INFO: 총 비디오 파일 수: 606
+2025-06-06 04:46:56,444 INFO: 이미 처리된 파일 수: 181
+2025-06-06 04:46:56,445 INFO: 처리해야 할 파일 수: 425
+2025-06-06 04:46:56,445 INFO: 사용할 CPU 코어 수: 2
+2025-06-06 04:47:04,289 INFO: Skipping lunge (1).mp4 - NPZ file already exists
+2025-06-06 04:47:04,290 INFO: Skipping lunge (10).mp4 - NPZ file already exists
+2025-06-06 04:47:04,291 INFO: Skipping lunge (13).mp4 - NPZ file already exists
+2025-06-06 04:47:04,291 INFO: Skipping lunge (14).mp4 - NPZ file already exists
+2025-06-06 04:47:04,291 INFO: Skipping lunge (15).mp4 - NPZ file already exists
+2025-06-06 04:47:04,292 INFO: Skipping lunge (16).mp4 - NPZ file already exists
+2025-06-06 04:47:04,292 INFO: Skipping lunge (17).mp4 - NPZ file already exists
+2025-06-06 04:47:04,292 INFO: Skipping lunge (18).mp4 - NPZ file already exists
+2025-06-06 04:47:04,293 INFO: Skipping lunge (19).mp4 - NPZ file already exists
+2025-06-06 04:47:04,293 INFO: Skipping lunge (2).mp4 - NPZ file already exists
+2025-06-06 04:47:04,294 INFO: Skipping lunge (20).mp4 - NPZ file already exists
+2025-06-06 04:47:04,294 INFO: Skipping lunge (21).mp4 - NPZ file already exists
+2025-06-06 04:47:08,850 INFO: Skipping bench_press (1).mp4 - Multiple people detected (2 people)
+2025-06-06 04:47:08,879 INFO: Skipping lunge (22).mp4 - Multiple people detected (2 people)
+2025-06-06 04:47:08,961 INFO: Skipping bench_press (10).mp4 - Multiple people detected (2 people)
+2025-06-06 04:47:12,230 INFO: Skipping bench_press (100).mp4 - Multiple people detected (2 people)
+2025-06-06 04:47:27,766 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (101).npz (1 frames)
+2025-06-06 04:47:32,371 INFO: Skipping lunge (23).mp4 - Multiple people detected (2 people)
+2025-06-06 04:47:32,377 INFO: Skipping lunge (25).mp4 - NPZ file already exists
+2025-06-06 04:47:32,378 INFO: Skipping lunge (26).mp4 - NPZ file already exists
+2025-06-06 04:47:32,378 INFO: Skipping lunge (28).mp4 - NPZ file already exists
+2025-06-06 04:47:37,383 INFO: Skipping lunge (29).mp4 - Multiple people detected (2 people)
+2025-06-06 04:47:40,293 INFO: Skipping lunge (3).mp4 - Multiple people detected (2 people)
+2025-06-06 04:47:40,403 INFO: Skipping lunge (31).mp4 - Multiple people detected (2 people)
+2025-06-06 04:47:40,409 INFO: Skipping lunge (32).mp4 - NPZ file already exists
+2025-06-06 04:47:45,645 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (102).npz (4 frames)
+2025-06-06 04:47:45,773 INFO: Skipping bench_press (103).mp4 - Multiple people detected (2 people)
+2025-06-06 04:47:45,902 INFO: Skipping bench_press (104).mp4 - Multiple people detected (3 people)
+2025-06-06 04:47:48,621 INFO: Skipping bench_press (105).mp4 - Multiple people detected (2 people)
+2025-06-06 04:47:53,551 INFO: Skipping bench_press (106).mp4 - Multiple people detected (2 people)
+2025-06-06 04:47:53,679 INFO: Skipping bench_press (107).mp4 - Multiple people detected (2 people)
+2025-06-06 04:47:55,957 INFO: Skipping lunge (33).mp4 - Multiple people detected (2 people)
+2025-06-06 04:47:55,964 INFO: Skipping lunge (35).mp4 - NPZ file already exists
+2025-06-06 04:47:55,964 INFO: Skipping lunge (36).mp4 - NPZ file already exists
+2025-06-06 04:47:55,965 INFO: Skipping lunge (39).mp4 - NPZ file already exists
+2025-06-06 04:47:55,965 INFO: Skipping lunge (40).mp4 - NPZ file already exists
+2025-06-06 04:47:55,965 INFO: Skipping lunge (42).mp4 - NPZ file already exists
+2025-06-06 04:47:55,966 INFO: Skipping lunge (45).mp4 - NPZ file already exists
+2025-06-06 04:48:00,584 INFO: Skipping bench_press (108).mp4 - Multiple people detected (2 people)
+2025-06-06 04:48:00,719 INFO: Skipping bench_press (109).mp4 - Multiple people detected (2 people)
+2025-06-06 04:48:02,808 INFO: Skipping bench_press (11).mp4 - Multiple people detected (2 people)
+2025-06-06 04:48:14,225 INFO: Skipping lunge (47).mp4 - Multiple people detected (2 people)
+2025-06-06 04:48:14,231 INFO: Skipping lunge (49).mp4 - NPZ file already exists
+2025-06-06 04:48:14,231 INFO: Skipping lunge (5).mp4 - NPZ file already exists
+2025-06-06 04:48:14,232 INFO: Skipping lunge (52).mp4 - NPZ file already exists
+2025-06-06 04:48:15,103 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (110).npz (1 frames)
+2025-06-06 04:48:15,707 INFO: Skipping bench_press (111).mp4 - Multiple people detected (2 people)
+2025-06-06 04:48:15,708 INFO: Skipping lunge (54).mp4 - Multiple people detected (2 people)
+2025-06-06 04:48:15,721 INFO: Skipping lunge (55).mp4 - NPZ file already exists
+2025-06-06 04:48:15,848 INFO: Skipping bench_press (112).mp4 - Multiple people detected (2 people)
+2025-06-06 04:48:16,196 INFO: Skipping bench_press (113).mp4 - Multiple people detected (2 people)
+2025-06-06 04:48:16,340 INFO: Skipping bench_press (114).mp4 - Multiple people detected (2 people)
+2025-06-06 04:48:20,329 INFO: Skipping lunge (56).mp4 - Multiple people detected (2 people)
+2025-06-06 04:48:20,334 INFO: Skipping lunge (58).mp4 - NPZ file already exists
+2025-06-06 04:48:23,520 INFO: Skipping lunge (6).mp4 - Multiple people detected (2 people)
+2025-06-06 04:48:29,526 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (115).npz (28 frames)
+2025-06-06 04:48:36,397 INFO: Skipping lunge (60).mp4 - Multiple people detected (2 people)
+2025-06-06 04:48:36,403 INFO: Skipping lunge (62).mp4 - NPZ file already exists
+2025-06-06 04:48:36,403 INFO: Skipping lunge (63).mp4 - NPZ file already exists
+2025-06-06 04:48:36,529 INFO: Skipping lunge (64).mp4 - Multiple people detected (2 people)
+2025-06-06 04:48:36,532 INFO: Skipping lunge (65).mp4 - NPZ file already exists
+2025-06-06 04:48:45,253 INFO: Skipping lunge (66).mp4 - Multiple people detected (2 people)
+2025-06-06 04:48:45,256 INFO: Skipping lunge (69).mp4 - NPZ file already exists
+2025-06-06 04:48:45,257 INFO: Skipping lunge (70).mp4 - NPZ file already exists
+2025-06-06 04:48:45,257 INFO: Skipping lunge (71).mp4 - NPZ file already exists
+2025-06-06 04:48:51,850 INFO: Skipping bench_press (116).mp4 - Multiple people detected (2 people)
+2025-06-06 04:48:51,992 INFO: Skipping bench_press (117).mp4 - Multiple people detected (2 people)
+2025-06-06 04:48:52,156 INFO: Skipping bench_press (118).mp4 - Multiple people detected (4 people)
+2025-06-06 04:48:54,535 INFO: Skipping lunge (72).mp4 - Multiple people detected (2 people)
+2025-06-06 04:48:54,544 INFO: Skipping lunge (73).mp4 - NPZ file already exists
+2025-06-06 04:48:54,544 INFO: Skipping lunge (74).mp4 - NPZ file already exists
+2025-06-06 04:48:54,545 INFO: Skipping lunge (75).mp4 - NPZ file already exists
+2025-06-06 04:48:54,545 INFO: Skipping lunge (76).mp4 - NPZ file already exists
+2025-06-06 04:48:54,545 INFO: Skipping lunge (79).mp4 - NPZ file already exists
+2025-06-06 04:48:54,546 INFO: Skipping lunge (8).mp4 - NPZ file already exists
+2025-06-06 04:49:05,082 INFO: Skipping lunge (80).mp4 - Multiple people detected (2 people)
+2025-06-06 04:49:05,087 INFO: Skipping lunge (81).mp4 - NPZ file already exists
+2025-06-06 04:49:05,088 INFO: Skipping lunge (82).mp4 - NPZ file already exists
+2025-06-06 04:49:05,088 INFO: Skipping lunge (84).mp4 - NPZ file already exists
+2025-06-06 04:49:05,088 INFO: Skipping lunge (86).mp4 - NPZ file already exists
+2025-06-06 04:49:05,089 INFO: Skipping lunge (87).mp4 - NPZ file already exists
+2025-06-06 04:49:05,089 INFO: Skipping lunge (9).mp4 - NPZ file already exists
+2025-06-06 04:49:05,089 INFO: Skipping lunge (90).mp4 - NPZ file already exists
+2025-06-06 04:49:05,089 INFO: Skipping lunge (95).mp4 - NPZ file already exists
+2025-06-06 04:49:05,090 INFO: Skipping pull_up (1).mp4 - NPZ file already exists
+2025-06-06 04:49:07,884 INFO: Skipping pull_up (10).mp4 - Multiple people detected (2 people)
+2025-06-06 04:49:07,889 INFO: Skipping pull_up (100).mp4 - NPZ file already exists
+2025-06-06 04:49:07,889 INFO: Skipping pull_up (101).mp4 - NPZ file already exists
+2025-06-06 04:49:07,889 INFO: Skipping pull_up (102).mp4 - NPZ file already exists
+2025-06-06 04:49:07,890 INFO: Skipping pull_up (103).mp4 - NPZ file already exists
+2025-06-06 04:49:07,890 INFO: Skipping pull_up (104).mp4 - NPZ file already exists
+2025-06-06 04:49:08,451 INFO: Skipping pull_up (105).mp4 - Multiple people detected (2 people)
+2025-06-06 04:49:16,192 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (119).npz (100 frames)
+2025-06-06 04:49:34,679 INFO: Skipping pull_up (106).mp4 - Multiple people detected (2 people)
+2025-06-06 04:49:34,685 INFO: Skipping pull_up (108).mp4 - NPZ file already exists
+2025-06-06 04:49:39,051 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (12).npz (99 frames)
+2025-06-06 04:49:39,180 INFO: Skipping bench_press (120).mp4 - Multiple people detected (2 people)
+2025-06-06 04:49:39,338 INFO: Skipping bench_press (121).mp4 - Multiple people detected (2 people)
+2025-06-06 04:49:39,480 INFO: Skipping bench_press (122).mp4 - Multiple people detected (2 people)
+2025-06-06 04:49:39,644 INFO: Skipping bench_press (123).mp4 - Multiple people detected (4 people)
+2025-06-06 04:49:39,778 INFO: Skipping bench_press (124).mp4 - Multiple people detected (2 people)
+2025-06-06 04:49:49,687 INFO: Skipping pull_up (109).mp4 - Multiple people detected (2 people)
+2025-06-06 04:49:54,923 INFO: Skipping pull_up (111).mp4 - Multiple people detected (2 people)
+2025-06-06 04:49:54,927 INFO: Skipping pull_up (112).mp4 - NPZ file already exists
+2025-06-06 04:49:54,927 INFO: Skipping pull_up (113).mp4 - NPZ file already exists
+2025-06-06 04:49:56,559 INFO: Skipping bench_press (125).mp4 - Multiple people detected (2 people)
+2025-06-06 04:49:56,759 INFO: Skipping bench_press (126).mp4 - Multiple people detected (2 people)
+2025-06-06 04:49:57,830 INFO: Skipping bench_press (127).mp4 - Multiple people detected (2 people)
+2025-06-06 04:49:58,295 INFO: Skipping pull_up (114).mp4 - Multiple people detected (2 people)
+2025-06-06 04:49:58,444 INFO: Skipping pull_up (115).mp4 - Multiple people detected (3 people)
+2025-06-06 04:49:58,582 INFO: Skipping pull_up (116).mp4 - Multiple people detected (2 people)
+2025-06-06 04:49:58,585 INFO: Skipping pull_up (117).mp4 - NPZ file already exists
+2025-06-06 04:49:58,765 INFO: Skipping pull_up (12).mp4 - Multiple people detected (3 people)
+2025-06-06 04:49:58,769 INFO: Skipping pull_up (120).mp4 - NPZ file already exists
+2025-06-06 04:49:58,770 INFO: Skipping pull_up (121).mp4 - NPZ file already exists
+2025-06-06 04:49:59,130 INFO: Skipping pull_up (122).mp4 - Multiple people detected (2 people)
+2025-06-06 04:49:59,555 INFO: Skipping pull_up (123).mp4 - Multiple people detected (2 people)
+2025-06-06 04:50:03,926 INFO: Skipping pull_up (124).mp4 - Multiple people detected (2 people)
+2025-06-06 04:50:04,063 INFO: Skipping pull_up (127).mp4 - Multiple people detected (2 people)
+2025-06-06 04:50:04,067 INFO: Skipping pull_up (131).mp4 - NPZ file already exists
+2025-06-06 04:50:10,971 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (128).npz (37 frames)
+2025-06-06 04:50:11,099 INFO: Skipping bench_press (129).mp4 - Multiple people detected (2 people)
+2025-06-06 04:50:11,213 INFO: Skipping bench_press (13).mp4 - Multiple people detected (2 people)
+2025-06-06 04:50:12,125 INFO: Skipping bench_press (130).mp4 - Multiple people detected (2 people)
+2025-06-06 04:50:12,264 INFO: Skipping bench_press (131).mp4 - Multiple people detected (2 people)
+2025-06-06 04:50:15,623 INFO: Skipping pull_up (133).mp4 - Multiple people detected (2 people)
+2025-06-06 04:50:19,482 INFO: Skipping pull_up (135).mp4 - Multiple people detected (3 people)
+2025-06-06 04:50:19,490 INFO: Skipping pull_up (136).mp4 - NPZ file already exists
+2025-06-06 04:50:19,491 INFO: Skipping pull_up (137).mp4 - NPZ file already exists
+2025-06-06 04:50:19,491 INFO: Skipping pull_up (138).mp4 - NPZ file already exists
+2025-06-06 04:50:19,491 INFO: Skipping pull_up (14).mp4 - NPZ file already exists
+2025-06-06 04:50:19,492 INFO: Skipping pull_up (141).mp4 - NPZ file already exists
+2025-06-06 04:50:19,492 INFO: Skipping pull_up (143).mp4 - NPZ file already exists
+2025-06-06 04:50:21,154 WARNING: No valid keypoints detected in bench_press (132).mp4
+2025-06-06 04:50:29,925 INFO: Skipping bench_press (133).mp4 - Multiple people detected (2 people)
+2025-06-06 04:50:34,553 INFO: Skipping bench_press (134).mp4 - Multiple people detected (2 people)
+2025-06-06 04:50:36,012 INFO: Skipping bench_press (135).mp4 - Multiple people detected (2 people)
+2025-06-06 04:50:36,147 INFO: Skipping bench_press (136).mp4 - Multiple people detected (3 people)
+2025-06-06 04:50:36,285 INFO: Skipping bench_press (137).mp4 - Multiple people detected (3 people)
+2025-06-06 04:50:36,415 INFO: Skipping bench_press (138).mp4 - Multiple people detected (2 people)
+2025-06-06 04:50:36,538 INFO: Skipping bench_press (139).mp4 - Multiple people detected (5 people)
+2025-06-06 04:50:41,502 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (14).npz (3 frames)
+2025-06-06 04:50:41,672 INFO: Skipping pull_up (144).mp4 - Multiple people detected (2 people)
+2025-06-06 04:50:41,680 INFO: Skipping pull_up (145).mp4 - NPZ file already exists
+2025-06-06 04:50:41,681 INFO: Skipping pull_up (146).mp4 - NPZ file already exists
+2025-06-06 04:50:55,176 INFO: Skipping pull_up (148).mp4 - Multiple people detected (2 people)
+2025-06-06 04:50:55,537 INFO: Skipping pull_up (149).mp4 - Multiple people detected (2 people)
+2025-06-06 04:50:55,548 INFO: Skipping pull_up (150).mp4 - NPZ file already exists
+2025-06-06 04:50:55,549 INFO: Skipping pull_up (16).mp4 - NPZ file already exists
+2025-06-06 04:50:55,549 INFO: Skipping pull_up (17).mp4 - NPZ file already exists
+2025-06-06 04:50:56,080 INFO: Skipping pull_up (18).mp4 - Multiple people detected (2 people)
+2025-06-06 04:50:56,086 INFO: Skipping pull_up (19).mp4 - NPZ file already exists
+2025-06-06 04:50:56,087 INFO: Skipping pull_up (2).mp4 - NPZ file already exists
+2025-06-06 04:50:57,049 INFO: Skipping pull_up (20).mp4 - Multiple people detected (2 people)
+2025-06-06 04:50:59,479 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (140).npz (64 frames)
+2025-06-06 04:50:59,619 INFO: Skipping bench_press (141).mp4 - Multiple people detected (3 people)
+2025-06-06 04:51:03,767 INFO: Skipping bench_press (142).mp4 - Multiple people detected (2 people)
+2025-06-06 04:51:03,802 INFO: Skipping pull_up (21).mp4 - Multiple people detected (2 people)
+2025-06-06 04:51:03,817 INFO: Skipping pull_up (22).mp4 - NPZ file already exists
+2025-06-06 04:51:03,817 INFO: Skipping pull_up (23).mp4 - NPZ file already exists
+2025-06-06 04:51:03,817 INFO: Skipping pull_up (24).mp4 - NPZ file already exists
+2025-06-06 04:51:03,860 INFO: Skipping bench_press (143).mp4 - Multiple people detected (2 people)
+2025-06-06 04:51:04,005 INFO: Skipping bench_press (144).mp4 - Multiple people detected (3 people)
+2025-06-06 04:51:04,140 INFO: Skipping bench_press (145).mp4 - Multiple people detected (2 people)
+2025-06-06 04:51:04,269 INFO: Skipping bench_press (146).mp4 - Multiple people detected (2 people)
+2025-06-06 04:51:12,060 INFO: Skipping bench_press (147).mp4 - Multiple people detected (2 people)
+2025-06-06 04:51:24,105 INFO: Skipping bench_press (148).mp4 - Multiple people detected (2 people)
+2025-06-06 04:51:24,440 INFO: Skipping bench_press (149).mp4 - Multiple people detected (2 people)
+2025-06-06 04:51:25,169 INFO: Skipping bench_press (15).mp4 - Multiple people detected (2 people)
+2025-06-06 04:51:28,196 INFO: Skipping pull_up (25).mp4 - Multiple people detected (2 people)
+2025-06-06 04:51:35,440 INFO: Skipping bench_press (150).mp4 - Multiple people detected (2 people)
+2025-06-06 04:51:36,510 INFO: Skipping pull_up (27).mp4 - Multiple people detected (2 people)
+2025-06-06 04:51:36,646 INFO: Skipping pull_up (28).mp4 - Multiple people detected (2 people)
+2025-06-06 04:51:36,901 INFO: Skipping bench_press (151).mp4 - Multiple people detected (2 people)
+2025-06-06 04:51:37,576 INFO: Skipping bench_press (152).mp4 - Multiple people detected (2 people)
+2025-06-06 04:51:37,701 INFO: Skipping pull_up (29).mp4 - Multiple people detected (2 people)
+2025-06-06 04:51:37,823 INFO: Skipping pull_up (3).mp4 - Multiple people detected (2 people)
+2025-06-06 04:51:37,980 INFO: Skipping pull_up (31).mp4 - Multiple people detected (2 people)
+2025-06-06 04:51:52,764 INFO: Skipping pull_up (33).mp4 - Multiple people detected (2 people)
+2025-06-06 04:51:52,793 INFO: Skipping pull_up (34).mp4 - NPZ file already exists
+2025-06-06 04:51:55,180 INFO: Skipping pull_up (35).mp4 - Multiple people detected (2 people)
+2025-06-06 04:51:55,184 INFO: Skipping pull_up (37).mp4 - NPZ file already exists
+2025-06-06 04:52:00,933 INFO: Skipping pull_up (39).mp4 - Multiple people detected (2 people)
+2025-06-06 04:52:01,890 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (153).npz (97 frames)
+2025-06-06 04:52:13,985 INFO: Skipping pull_up (41).mp4 - Multiple people detected (2 people)
+2025-06-06 04:52:13,990 INFO: Skipping pull_up (46).mp4 - NPZ file already exists
+2025-06-06 04:52:13,991 INFO: Skipping pull_up (47).mp4 - NPZ file already exists
+2025-06-06 04:52:13,991 INFO: Skipping pull_up (48).mp4 - NPZ file already exists
+2025-06-06 04:52:13,992 INFO: Skipping pull_up (49).mp4 - NPZ file already exists
+2025-06-06 04:52:14,108 INFO: Skipping pull_up (5).mp4 - Multiple people detected (2 people)
+2025-06-06 04:52:14,215 INFO: Skipping pull_up (50).mp4 - Multiple people detected (2 people)
+2025-06-06 04:52:14,341 INFO: Skipping pull_up (51).mp4 - Multiple people detected (2 people)
+2025-06-06 04:52:14,347 INFO: Skipping pull_up (52).mp4 - NPZ file already exists
+2025-06-06 04:52:26,025 INFO: Skipping pull_up (53).mp4 - Multiple people detected (2 people)
+2025-06-06 04:52:27,390 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (154).npz (74 frames)
+2025-06-06 04:52:29,495 INFO: Skipping pull_up (54).mp4 - Multiple people detected (2 people)
+2025-06-06 04:52:29,500 INFO: Skipping pull_up (56).mp4 - NPZ file already exists
+2025-06-06 04:52:29,500 INFO: Skipping pull_up (58).mp4 - NPZ file already exists
+2025-06-06 04:52:29,501 INFO: Skipping pull_up (60).mp4 - NPZ file already exists
+2025-06-06 04:52:29,639 INFO: Skipping pull_up (63).mp4 - Multiple people detected (3 people)
+2025-06-06 04:52:29,781 INFO: Skipping pull_up (64).mp4 - Multiple people detected (2 people)
+2025-06-06 04:52:37,525 INFO: Skipping pull_up (65).mp4 - Multiple people detected (2 people)
+2025-06-06 04:52:37,530 INFO: Skipping pull_up (66).mp4 - NPZ file already exists
+2025-06-06 04:52:37,530 INFO: Skipping pull_up (67).mp4 - NPZ file already exists
+2025-06-06 04:52:37,531 INFO: Skipping pull_up (68).mp4 - NPZ file already exists
+2025-06-06 04:52:42,027 INFO: Skipping pull_up (69).mp4 - Multiple people detected (2 people)
+2025-06-06 04:52:42,031 INFO: Skipping pull_up (7).mp4 - NPZ file already exists
+2025-06-06 04:52:42,111 INFO: Skipping pull_up (70).mp4 - Multiple people detected (2 people)
+2025-06-06 04:52:42,444 INFO: Skipping pull_up (72).mp4 - Multiple people detected (2 people)
+2025-06-06 04:52:42,449 INFO: Skipping pull_up (74).mp4 - NPZ file already exists
+2025-06-06 04:52:42,449 INFO: Skipping pull_up (75).mp4 - NPZ file already exists
+2025-06-06 04:52:42,450 INFO: Skipping pull_up (76).mp4 - NPZ file already exists
+2025-06-06 04:52:43,321 INFO: Skipping pull_up (77).mp4 - Multiple people detected (2 people)
+2025-06-06 04:52:43,327 INFO: Skipping pull_up (78).mp4 - NPZ file already exists
+2025-06-06 04:52:45,724 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (155).npz (71 frames)
+2025-06-06 04:52:46,922 INFO: Skipping bench_press (156).mp4 - Multiple people detected (2 people)
+2025-06-06 04:52:55,005 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (157).npz (26 frames)
+2025-06-06 04:53:05,294 INFO: Skipping pull_up (79).mp4 - Multiple people detected (2 people)
+2025-06-06 04:53:06,521 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (158).npz (27 frames)
+2025-06-06 04:53:06,650 INFO: Skipping bench_press (159).mp4 - Multiple people detected (3 people)
+2025-06-06 04:53:07,044 INFO: Skipping pull_up (8).mp4 - Multiple people detected (2 people)
+2025-06-06 04:53:07,048 INFO: Skipping pull_up (80).mp4 - NPZ file already exists
+2025-06-06 04:53:07,049 INFO: Skipping pull_up (81).mp4 - NPZ file already exists
+2025-06-06 04:53:07,049 INFO: Skipping pull_up (82).mp4 - NPZ file already exists
+2025-06-06 04:53:07,472 INFO: Skipping pull_up (83).mp4 - Multiple people detected (2 people)
+2025-06-06 04:53:10,612 INFO: Skipping pull_up (84).mp4 - Multiple people detected (2 people)
+2025-06-06 04:53:10,615 INFO: Skipping pull_up (85).mp4 - NPZ file already exists
+2025-06-06 04:53:10,616 INFO: Skipping pull_up (86).mp4 - NPZ file already exists
+2025-06-06 04:53:10,616 INFO: Skipping pull_up (87).mp4 - NPZ file already exists
+2025-06-06 04:53:10,750 INFO: Skipping pull_up (88).mp4 - Multiple people detected (3 people)
+2025-06-06 04:53:10,897 INFO: Skipping pull_up (89).mp4 - Multiple people detected (5 people)
+2025-06-06 04:53:11,033 INFO: Skipping pull_up (9).mp4 - Multiple people detected (3 people)
+2025-06-06 04:53:11,038 INFO: Skipping pull_up (90).mp4 - NPZ file already exists
+2025-06-06 04:53:11,039 INFO: Skipping pull_up (91).mp4 - NPZ file already exists
+2025-06-06 04:53:11,039 INFO: Skipping pull_up (92).mp4 - NPZ file already exists
+2025-06-06 04:53:11,039 INFO: Skipping pull_up (93).mp4 - NPZ file already exists
+2025-06-06 04:53:11,040 INFO: Skipping pull_up (94).mp4 - NPZ file already exists
+2025-06-06 04:53:11,165 INFO: Skipping pull_up (95).mp4 - Multiple people detected (3 people)
+2025-06-06 04:53:11,290 INFO: Skipping pull_up (96).mp4 - Multiple people detected (2 people)
+2025-06-06 04:53:11,409 INFO: Skipping pull_up (97).mp4 - Multiple people detected (2 people)
+2025-06-06 04:53:11,413 INFO: Skipping pull_up (98).mp4 - NPZ file already exists
+2025-06-06 04:53:14,066 INFO: Skipping pull_up (99).mp4 - Multiple people detected (2 people)
+2025-06-06 04:53:14,071 INFO: Skipping push_up (1).mp4 - NPZ file already exists
+2025-06-06 04:53:19,835 INFO: Skipping push_up (10).mp4 - Multiple people detected (2 people)
+2025-06-06 04:53:19,843 INFO: Skipping push_up (11).mp4 - NPZ file already exists
+2025-06-06 04:53:19,843 INFO: Skipping push_up (12).mp4 - NPZ file already exists
+2025-06-06 04:53:20,280 INFO: Skipping push_up (13).mp4 - Multiple people detected (2 people)
+2025-06-06 04:53:20,285 INFO: Skipping push_up (14).mp4 - NPZ file already exists
+2025-06-06 04:53:20,285 INFO: Skipping push_up (16).mp4 - NPZ file already exists
+2025-06-06 04:53:20,286 INFO: Skipping push_up (17).mp4 - NPZ file already exists
+2025-06-06 04:53:20,286 INFO: Skipping push_up (2).mp4 - NPZ file already exists
+2025-06-06 04:53:20,286 INFO: Skipping push_up (20).mp4 - NPZ file already exists
+2025-06-06 04:53:20,287 INFO: Skipping push_up (23).mp4 - NPZ file already exists
+2025-06-06 04:53:20,287 INFO: Skipping push_up (25).mp4 - NPZ file already exists
+2025-06-06 04:53:20,288 INFO: Skipping push_up (26).mp4 - NPZ file already exists
+2025-06-06 04:53:21,733 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (16).npz (4 frames)
+2025-06-06 04:53:28,873 INFO: Skipping push_up (27).mp4 - Multiple people detected (2 people)
+2025-06-06 04:53:28,880 INFO: Skipping push_up (29).mp4 - NPZ file already exists
+2025-06-06 04:53:28,880 INFO: Skipping push_up (3).mp4 - NPZ file already exists
+2025-06-06 04:53:29,010 INFO: Skipping push_up (30).mp4 - Multiple people detected (2 people)
+2025-06-06 04:53:29,014 INFO: Skipping push_up (31).mp4 - NPZ file already exists
+2025-06-06 04:53:29,014 INFO: Skipping push_up (34).mp4 - NPZ file already exists
+2025-06-06 04:53:29,014 INFO: Skipping push_up (36).mp4 - NPZ file already exists
+2025-06-06 04:53:29,119 INFO: Skipping push_up (37).mp4 - Multiple people detected (4 people)
+2025-06-06 04:53:31,336 INFO: Skipping bench_press (160).mp4 - Multiple people detected (2 people)
+2025-06-06 04:53:31,469 INFO: Skipping bench_press (161).mp4 - Multiple people detected (2 people)
+2025-06-06 04:53:41,109 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (162).npz (18 frames)
+2025-06-06 04:53:41,240 INFO: Skipping bench_press (163).mp4 - Multiple people detected (2 people)
+2025-06-06 04:53:47,250 INFO: Skipping bench_press (164).mp4 - Multiple people detected (2 people)
+2025-06-06 04:53:47,346 INFO: Skipping bench_press (165).mp4 - Multiple people detected (3 people)
+2025-06-06 04:53:56,186 INFO: Skipping push_up (4).mp4 - Multiple people detected (2 people)
+2025-06-06 04:53:56,189 INFO: Skipping push_up (40).mp4 - NPZ file already exists
+2025-06-06 04:53:56,329 INFO: Skipping push_up (42).mp4 - Multiple people detected (3 people)
+2025-06-06 04:54:01,516 INFO: Skipping push_up (43).mp4 - Multiple people detected (2 people)
+2025-06-06 04:54:03,924 INFO: Skipping push_up (44).mp4 - Multiple people detected (2 people)
+2025-06-06 04:54:03,929 INFO: Skipping push_up (45).mp4 - NPZ file already exists
+2025-06-06 04:54:03,929 INFO: Skipping push_up (46).mp4 - NPZ file already exists
+2025-06-06 04:54:03,930 INFO: Skipping push_up (47).mp4 - NPZ file already exists
+2025-06-06 04:54:03,930 INFO: Skipping push_up (48).mp4 - NPZ file already exists
+2025-06-06 04:54:03,930 INFO: Skipping push_up (49).mp4 - NPZ file already exists
+2025-06-06 04:54:04,062 INFO: Skipping push_up (50).mp4 - Multiple people detected (2 people)
+2025-06-06 04:54:04,071 INFO: Skipping push_up (52).mp4 - NPZ file already exists
+2025-06-06 04:54:04,072 INFO: Skipping push_up (53).mp4 - NPZ file already exists
+2025-06-06 04:54:04,223 INFO: Skipping push_up (58).mp4 - Multiple people detected (2 people)
+2025-06-06 04:54:04,225 INFO: Skipping push_up (6).mp4 - NPZ file already exists
+2025-06-06 04:54:04,227 INFO: Skipping push_up (60).mp4 - NPZ file already exists
+2025-06-06 04:54:04,374 INFO: Skipping push_up (63).mp4 - Multiple people detected (2 people)
+2025-06-06 04:54:04,379 INFO: Skipping push_up (64).mp4 - NPZ file already exists
+2025-06-06 04:54:04,379 INFO: Skipping push_up (65).mp4 - NPZ file already exists
+2025-06-06 04:54:04,380 INFO: Skipping push_up (66).mp4 - NPZ file already exists
+2025-06-06 04:54:04,380 INFO: Skipping push_up (68).mp4 - NPZ file already exists
+2025-06-06 04:54:04,380 INFO: Skipping push_up (69).mp4 - NPZ file already exists
+2025-06-06 04:54:04,381 INFO: Skipping push_up (7).mp4 - NPZ file already exists
+2025-06-06 04:54:04,381 INFO: Skipping push_up (71).mp4 - NPZ file already exists
+2025-06-06 04:54:04,381 INFO: Skipping push_up (72).mp4 - NPZ file already exists
+2025-06-06 04:54:04,382 INFO: Skipping push_up (75).mp4 - NPZ file already exists
+2025-06-06 04:54:04,382 INFO: Skipping push_up (76).mp4 - NPZ file already exists
+2025-06-06 04:54:04,382 INFO: Skipping push_up (77).mp4 - NPZ file already exists
+2025-06-06 04:54:04,383 INFO: Skipping push_up (78).mp4 - NPZ file already exists
+2025-06-06 04:54:04,384 INFO: Skipping squat (100).mp4 - NPZ file already exists
+2025-06-06 04:54:05,797 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (166).npz (62 frames)
+2025-06-06 04:54:05,949 INFO: Skipping bench_press (167).mp4 - Multiple people detected (2 people)
+2025-06-06 04:54:06,098 INFO: Skipping bench_press (168).mp4 - Multiple people detected (4 people)
+2025-06-06 04:54:06,232 INFO: Skipping bench_press (169).mp4 - Multiple people detected (3 people)
+2025-06-06 04:54:12,851 INFO: Skipping squat (101).mp4 - Multiple people detected (2 people)
+2025-06-06 04:54:12,999 INFO: Skipping squat (102).mp4 - Multiple people detected (2 people)
+2025-06-06 04:54:13,142 INFO: Skipping squat (103).mp4 - Multiple people detected (2 people)
+2025-06-06 04:54:15,407 INFO: Skipping squat (104).mp4 - Multiple people detected (2 people)
+2025-06-06 04:54:25,842 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (17).npz (50 frames)
+2025-06-06 04:54:29,490 INFO: Skipping squat (105).mp4 - Multiple people detected (2 people)
+2025-06-06 04:54:31,740 INFO: Skipping squat (107).mp4 - Multiple people detected (2 people)
+2025-06-06 04:54:31,897 INFO: Skipping squat (108).mp4 - Multiple people detected (3 people)
+2025-06-06 04:54:31,907 INFO: Skipping squat (109).mp4 - NPZ file already exists
+2025-06-06 04:54:32,045 INFO: Skipping squat (110).mp4 - Multiple people detected (3 people)
+2025-06-06 04:54:32,443 INFO: Skipping squat (111).mp4 - Multiple people detected (2 people)
+2025-06-06 04:54:32,447 INFO: Skipping squat (112).mp4 - NPZ file already exists
+2025-06-06 04:54:32,448 INFO: Skipping squat (113).mp4 - NPZ file already exists
+2025-06-06 04:54:32,448 INFO: Skipping squat (114).mp4 - NPZ file already exists
+2025-06-06 04:54:32,574 INFO: Skipping squat (115).mp4 - Multiple people detected (2 people)
+2025-06-06 04:54:32,578 INFO: Skipping squat (116).mp4 - NPZ file already exists
+2025-06-06 04:54:32,578 INFO: Skipping squat (118).mp4 - NPZ file already exists
+2025-06-06 04:54:32,579 INFO: Skipping squat (119).mp4 - NPZ file already exists
+2025-06-06 04:54:32,690 INFO: Skipping squat (120).mp4 - Multiple people detected (3 people)
+2025-06-06 04:54:32,823 INFO: Skipping squat (121).mp4 - Multiple people detected (3 people)
+2025-06-06 04:54:32,827 INFO: Skipping squat (122).mp4 - NPZ file already exists
+2025-06-06 04:54:39,016 INFO: Skipping squat (123).mp4 - Multiple people detected (2 people)
+2025-06-06 04:54:39,020 INFO: Skipping squat (124).mp4 - NPZ file already exists
+2025-06-06 04:54:39,146 INFO: Skipping squat (125).mp4 - Multiple people detected (3 people)
+2025-06-06 04:54:49,515 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (170).npz (100 frames)
+2025-06-06 04:55:01,004 INFO: Skipping squat (126).mp4 - Multiple people detected (2 people)
+2025-06-06 04:55:01,132 INFO: Skipping squat (127).mp4 - Multiple people detected (2 people)
+2025-06-06 04:55:12,827 INFO: Skipping squat (128).mp4 - Multiple people detected (2 people)
+2025-06-06 04:55:12,975 INFO: Skipping squat (129).mp4 - Multiple people detected (2 people)
+2025-06-06 04:55:15,159 INFO: Skipping squat (130).mp4 - Multiple people detected (2 people)
+2025-06-06 04:55:16,292 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (171).npz (80 frames)
+2025-06-06 04:55:16,421 INFO: Skipping bench_press (172).mp4 - Multiple people detected (3 people)
+2025-06-06 04:55:24,365 INFO: Skipping bench_press (173).mp4 - Multiple people detected (2 people)
+2025-06-06 04:55:24,553 INFO: Skipping bench_press (174).mp4 - Multiple people detected (3 people)
+2025-06-06 04:55:28,801 INFO: Skipping bench_press (175).mp4 - Multiple people detected (2 people)
+2025-06-06 04:55:28,927 INFO: Skipping bench_press (176).mp4 - Multiple people detected (2 people)
+2025-06-06 04:55:29,052 INFO: Skipping bench_press (177).mp4 - Multiple people detected (3 people)
+2025-06-06 04:55:29,189 INFO: Skipping bench_press (178).mp4 - Multiple people detected (5 people)
+2025-06-06 04:55:33,562 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (179).npz (11 frames)
+2025-06-06 04:55:33,703 INFO: Skipping squat (131).mp4 - Multiple people detected (2 people)
+2025-06-06 04:55:33,830 INFO: Skipping squat (132).mp4 - Multiple people detected (2 people)
+2025-06-06 04:55:33,970 INFO: Skipping squat (133).mp4 - Multiple people detected (4 people)
+2025-06-06 04:55:33,974 INFO: Skipping squat (134).mp4 - NPZ file already exists
+2025-06-06 04:55:33,974 INFO: Skipping squat (135).mp4 - NPZ file already exists
+2025-06-06 04:55:34,857 INFO: Skipping squat (136).mp4 - Multiple people detected (2 people)
+2025-06-06 04:55:35,939 INFO: Skipping squat (137).mp4 - Multiple people detected (2 people)
+2025-06-06 04:55:43,467 INFO: Skipping squat (138).mp4 - Multiple people detected (2 people)
+2025-06-06 04:55:43,619 INFO: Skipping squat (139).mp4 - Multiple people detected (3 people)
+2025-06-06 04:55:43,623 INFO: Skipping squat (140).mp4 - NPZ file already exists
+2025-06-06 04:55:43,624 INFO: Skipping squat (141).mp4 - NPZ file already exists
+2025-06-06 04:55:43,624 INFO: Skipping squat (142).mp4 - NPZ file already exists
+2025-06-06 04:55:43,624 INFO: Skipping squat (143).mp4 - NPZ file already exists
+2025-06-06 04:55:43,626 INFO: Skipping squat (144).mp4 - NPZ file already exists
+2025-06-06 04:55:43,626 INFO: Skipping squat (145).mp4 - NPZ file already exists
+2025-06-06 04:55:43,741 INFO: Skipping squat (146).mp4 - Multiple people detected (7 people)
+2025-06-06 04:55:43,891 INFO: Skipping squat (147).mp4 - Multiple people detected (3 people)
+2025-06-06 04:55:48,228 INFO: Skipping squat (148).mp4 - Multiple people detected (2 people)
+2025-06-06 04:55:48,320 INFO: Skipping squat (149).mp4 - Multiple people detected (2 people)
+2025-06-06 04:55:48,324 INFO: Skipping squat (150).mp4 - NPZ file already exists
+2025-06-06 04:55:48,459 INFO: Skipping squat (151).mp4 - Multiple people detected (7 people)
+2025-06-06 04:55:48,813 INFO: Skipping squat (152).mp4 - Multiple people detected (3 people)
+2025-06-06 04:55:48,951 INFO: Skipping squat (153).mp4 - Multiple people detected (4 people)
+2025-06-06 04:55:49,106 INFO: Skipping squat (154).mp4 - Multiple people detected (11 people)
+2025-06-06 04:55:49,111 INFO: Skipping squat (155).mp4 - NPZ file already exists
+2025-06-06 04:55:49,244 INFO: Skipping squat (156).mp4 - Multiple people detected (2 people)
+2025-06-06 04:55:49,905 INFO: Skipping bench_press (18).mp4 - Multiple people detected (2 people)
+2025-06-06 04:55:50,255 INFO: Skipping bench_press (180).mp4 - Multiple people detected (2 people)
+2025-06-06 04:56:02,747 INFO: Skipping squat (157).mp4 - Multiple people detected (2 people)
+2025-06-06 04:56:02,752 INFO: Skipping squat (158).mp4 - NPZ file already exists
+2025-06-06 04:56:02,873 INFO: Skipping squat (159).mp4 - Multiple people detected (2 people)
+2025-06-06 04:56:02,876 INFO: Skipping squat (160).mp4 - NPZ file already exists
+2025-06-06 04:56:03,003 INFO: Skipping squat (161).mp4 - Multiple people detected (2 people)
+2025-06-06 04:56:03,008 INFO: Skipping squat (162).mp4 - NPZ file already exists
+2025-06-06 04:56:03,543 INFO: Skipping squat (163).mp4 - Multiple people detected (2 people)
+2025-06-06 04:56:03,682 INFO: Skipping squat (164).mp4 - Multiple people detected (2 people)
+2025-06-06 04:56:03,803 INFO: Skipping squat (165).mp4 - Multiple people detected (2 people)
+2025-06-06 04:56:14,596 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (181).npz (100 frames)
+2025-06-06 04:56:14,844 INFO: Skipping bench_press (182).mp4 - Multiple people detected (2 people)
+2025-06-06 04:56:15,494 INFO: Skipping squat (166).mp4 - Multiple people detected (2 people)
+2025-06-06 04:56:15,630 INFO: Skipping squat (167).mp4 - Multiple people detected (2 people)
+2025-06-06 04:56:15,783 INFO: Skipping squat (168).mp4 - Multiple people detected (2 people)
+2025-06-06 04:56:15,914 INFO: Skipping squat (169).mp4 - Multiple people detected (2 people)
+2025-06-06 04:56:15,917 INFO: Skipping squat (170).mp4 - NPZ file already exists
+2025-06-06 04:56:16,043 INFO: Skipping squat (171).mp4 - Multiple people detected (2 people)
+2025-06-06 04:56:16,155 INFO: Skipping squat (172).mp4 - Multiple people detected (3 people)
+2025-06-06 04:56:16,310 INFO: Skipping squat (173).mp4 - Multiple people detected (4 people)
+2025-06-06 04:56:24,067 INFO: Skipping squat (35).mp4 - Multiple people detected (2 people)
+2025-06-06 04:56:24,078 INFO: Skipping squat (36).mp4 - NPZ file already exists
+2025-06-06 04:56:24,174 INFO: Skipping squat (37).mp4 - Multiple people detected (2 people)
+2025-06-06 04:56:24,180 INFO: Skipping squat (41).mp4 - NPZ file already exists
+2025-06-06 04:56:24,315 INFO: Skipping squat (45).mp4 - Multiple people detected (2 people)
+2025-06-06 04:56:34,470 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (183).npz (78 frames)
+2025-06-06 04:56:36,341 INFO: Skipping squat (46).mp4 - Multiple people detected (2 people)
+2025-06-06 04:56:36,347 INFO: Skipping squat (47).mp4 - NPZ file already exists
+2025-06-06 04:56:36,470 INFO: Skipping squat (50).mp4 - Multiple people detected (6 people)
+2025-06-06 04:56:38,711 INFO: Skipping bench_press (184).mp4 - Multiple people detected (2 people)
+2025-06-06 04:56:38,835 INFO: Skipping bench_press (185).mp4 - Multiple people detected (2 people)
+2025-06-06 04:56:40,829 INFO: Skipping squat (52).mp4 - Multiple people detected (2 people)
+2025-06-06 04:56:40,985 INFO: Skipping bench_press (186).mp4 - Multiple people detected (2 people)
+2025-06-06 04:56:41,122 INFO: Skipping bench_press (187).mp4 - Multiple people detected (4 people)
+2025-06-06 04:56:41,529 INFO: Skipping bench_press (188).mp4 - Multiple people detected (2 people)
+2025-06-06 04:56:41,889 INFO: Skipping bench_press (189).mp4 - Multiple people detected (3 people)
+2025-06-06 04:56:42,037 INFO: Skipping bench_press (19).mp4 - Multiple people detected (2 people)
+2025-06-06 04:56:49,675 INFO: Skipping squat (66).mp4 - Multiple people detected (2 people)
+2025-06-06 04:56:49,681 INFO: Skipping squat (68).mp4 - NPZ file already exists
+2025-06-06 04:56:49,681 INFO: Skipping squat (71).mp4 - NPZ file already exists
+2025-06-06 04:56:49,808 INFO: Skipping squat (73).mp4 - Multiple people detected (3 people)
+2025-06-06 04:56:49,812 INFO: Skipping squat (74).mp4 - NPZ file already exists
+2025-06-06 04:56:49,812 INFO: Skipping squat (76).mp4 - NPZ file already exists
+2025-06-06 04:56:49,812 INFO: Skipping squat (77).mp4 - NPZ file already exists
+2025-06-06 04:56:49,959 INFO: Skipping squat (80).mp4 - Multiple people detected (4 people)
+2025-06-06 04:56:50,102 INFO: Skipping squat (81).mp4 - Multiple people detected (7 people)
+2025-06-06 04:56:57,524 INFO: Skipping squat (82).mp4 - Multiple people detected (2 people)
+2025-06-06 04:57:09,014 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (190).npz (99 frames)
+2025-06-06 04:57:09,155 INFO: Skipping bench_press (191).mp4 - Multiple people detected (2 people)
+2025-06-06 04:57:12,047 INFO: Skipping squat (83).mp4 - Multiple people detected (2 people)
+2025-06-06 04:57:12,051 INFO: Skipping squat (84).mp4 - NPZ file already exists
+2025-06-06 04:57:12,207 INFO: Skipping squat (85).mp4 - Multiple people detected (2 people)
+2025-06-06 04:57:12,212 INFO: Skipping squat (87).mp4 - NPZ file already exists
+2025-06-06 04:57:12,212 INFO: Skipping squat (88).mp4 - NPZ file already exists
+2025-06-06 04:57:12,561 INFO: Skipping squat (89).mp4 - Multiple people detected (2 people)
+2025-06-06 04:57:12,682 INFO: Skipping squat (90).mp4 - Multiple people detected (2 people)
+2025-06-06 04:57:12,824 INFO: Skipping squat (92).mp4 - Multiple people detected (3 people)
+2025-06-06 04:57:12,969 INFO: Skipping squat (93).mp4 - Multiple people detected (2 people)
+2025-06-06 04:57:13,095 INFO: Skipping squat (94).mp4 - Multiple people detected (5 people)
+2025-06-06 04:57:13,219 INFO: Skipping squat (95).mp4 - Multiple people detected (4 people)
+2025-06-06 04:57:13,223 INFO: Skipping squat (96).mp4 - NPZ file already exists
+2025-06-06 04:57:13,363 INFO: Skipping squat (97).mp4 - Multiple people detected (3 people)
+2025-06-06 04:57:13,369 INFO: Skipping squat (98).mp4 - NPZ file already exists
+2025-06-06 04:57:13,479 INFO: Skipping squat (99).mp4 - Multiple people detected (2 people)
+2025-06-06 04:57:14,370 WARNING: No valid keypoints detected in bench_press (192).mp4
+2025-06-06 04:57:14,436 INFO: Skipping bench_press (193).mp4 - Multiple people detected (3 people)
+2025-06-06 04:57:14,507 INFO: Skipping bench_press (194).mp4 - Multiple people detected (4 people)
+2025-06-06 04:57:14,567 INFO: Skipping bench_press (195).mp4 - Multiple people detected (2 people)
+2025-06-06 04:57:14,640 INFO: Skipping bench_press (196).mp4 - Multiple people detected (2 people)
+2025-06-06 04:57:16,539 INFO: Skipping bench_press (197).mp4 - Multiple people detected (2 people)
+2025-06-06 04:57:16,709 INFO: Skipping bench_press (198).mp4 - Multiple people detected (3 people)
+2025-06-06 04:57:17,009 INFO: Skipping bench_press (199).mp4 - Multiple people detected (2 people)
+2025-06-06 04:57:24,672 INFO: Skipping bench_press (2).mp4 - Multiple people detected (2 people)
+2025-06-06 04:57:29,343 INFO: Skipping bench_press (20).mp4 - Multiple people detected (2 people)
+2025-06-06 04:57:39,855 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (200).npz (61 frames)
+2025-06-06 04:57:51,006 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (201).npz (91 frames)
+2025-06-06 04:58:03,883 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (202).npz (100 frames)
+2025-06-06 04:58:04,056 INFO: Skipping bench_press (203).mp4 - Multiple people detected (2 people)
+2025-06-06 04:58:08,138 INFO: Skipping bench_press (204).mp4 - Multiple people detected (2 people)
+2025-06-06 04:58:08,212 INFO: Skipping bench_press (205).mp4 - Multiple people detected (3 people)
+2025-06-06 04:58:14,373 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (206).npz (36 frames)
+2025-06-06 04:58:16,491 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (207).npz (11 frames)
+2025-06-06 04:58:16,554 INFO: Skipping bench_press (208).mp4 - Multiple people detected (2 people)
+2025-06-06 04:58:16,617 INFO: Skipping bench_press (209).mp4 - Multiple people detected (6 people)
+2025-06-06 04:58:23,231 INFO: Skipping bench_press (21).mp4 - Multiple people detected (2 people)
+2025-06-06 04:58:23,432 INFO: Skipping bench_press (210).mp4 - Multiple people detected (3 people)
+2025-06-06 04:58:23,701 INFO: Skipping bench_press (211).mp4 - Multiple people detected (2 people)
+2025-06-06 04:58:25,073 INFO: Skipping bench_press (212).mp4 - Multiple people detected (2 people)
+2025-06-06 04:58:27,914 INFO: Skipping bench_press (213).mp4 - Multiple people detected (2 people)
+2025-06-06 04:58:27,979 INFO: Skipping bench_press (214).mp4 - Multiple people detected (2 people)
+2025-06-06 04:58:39,469 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (215).npz (100 frames)
+2025-06-06 04:58:40,762 INFO: Skipping bench_press (216).mp4 - Multiple people detected (2 people)
+2025-06-06 04:58:41,173 INFO: Skipping bench_press (217).mp4 - Multiple people detected (2 people)
+2025-06-06 04:58:41,371 INFO: Skipping bench_press (218).mp4 - Multiple people detected (2 people)
+2025-06-06 04:58:41,430 INFO: Skipping bench_press (219).mp4 - Multiple people detected (4 people)
+2025-06-06 04:58:49,312 INFO: Skipping bench_press (22).mp4 - Multiple people detected (2 people)
+2025-06-06 04:58:49,675 INFO: Skipping bench_press (220).mp4 - Multiple people detected (2 people)
+2025-06-06 04:58:49,747 INFO: Skipping bench_press (221).mp4 - Multiple people detected (2 people)
+2025-06-06 04:58:49,816 INFO: Skipping bench_press (222).mp4 - Multiple people detected (2 people)
+2025-06-06 04:58:54,365 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (223).npz (27 frames)
+2025-06-06 04:58:54,427 INFO: Skipping bench_press (224).mp4 - Multiple people detected (2 people)
+2025-06-06 04:58:56,029 INFO: Skipping bench_press (225).mp4 - Multiple people detected (2 people)
+2025-06-06 04:59:07,506 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (226).npz (80 frames)
+2025-06-06 04:59:07,579 INFO: Skipping bench_press (227).mp4 - Multiple people detected (3 people)
+2025-06-06 04:59:10,175 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (228).npz (8 frames)
+2025-06-06 04:59:10,263 INFO: Skipping bench_press (229).mp4 - Multiple people detected (2 people)
+2025-06-06 04:59:10,585 INFO: Skipping bench_press (23).mp4 - Multiple people detected (2 people)
+2025-06-06 04:59:10,651 INFO: Skipping bench_press (230).mp4 - Multiple people detected (2 people)
+2025-06-06 04:59:13,695 WARNING: No valid keypoints detected in bench_press (231).mp4
+2025-06-06 04:59:15,583 INFO: Skipping bench_press (232).mp4 - Multiple people detected (2 people)
+2025-06-06 04:59:16,480 INFO: Skipping bench_press (233).mp4 - Multiple people detected (2 people)
+2025-06-06 04:59:18,813 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (234).npz (22 frames)
+2025-06-06 04:59:19,003 INFO: Skipping bench_press (235).mp4 - Multiple people detected (3 people)
+2025-06-06 04:59:19,063 INFO: Skipping bench_press (236).mp4 - Multiple people detected (2 people)
+2025-06-06 04:59:24,963 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (237).npz (39 frames)
+2025-06-06 04:59:25,025 INFO: Skipping bench_press (238).mp4 - Multiple people detected (5 people)
+2025-06-06 04:59:25,293 INFO: Skipping bench_press (239).mp4 - Multiple people detected (2 people)
+2025-06-06 04:59:33,521 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (24).npz (73 frames)
+2025-06-06 04:59:33,711 INFO: Skipping bench_press (240).mp4 - Multiple people detected (2 people)
+2025-06-06 04:59:33,794 INFO: Skipping bench_press (241).mp4 - Multiple people detected (4 people)
+2025-06-06 04:59:33,875 INFO: Skipping bench_press (242).mp4 - Multiple people detected (2 people)
+2025-06-06 04:59:33,945 INFO: Skipping bench_press (243).mp4 - Multiple people detected (3 people)
+2025-06-06 04:59:34,010 INFO: Skipping bench_press (244).mp4 - Multiple people detected (4 people)
+2025-06-06 04:59:37,027 INFO: Skipping bench_press (245).mp4 - Multiple people detected (2 people)
+2025-06-06 04:59:37,095 INFO: Skipping bench_press (246).mp4 - Multiple people detected (4 people)
+2025-06-06 04:59:37,175 INFO: Skipping bench_press (247).mp4 - Multiple people detected (2 people)
+2025-06-06 04:59:40,789 INFO: Skipping bench_press (248).mp4 - Multiple people detected (2 people)
+2025-06-06 04:59:43,380 INFO: Skipping bench_press (249).mp4 - Multiple people detected (2 people)
+2025-06-06 04:59:43,544 INFO: Skipping bench_press (25).mp4 - Multiple people detected (2 people)
+2025-06-06 04:59:43,609 INFO: Skipping bench_press (250).mp4 - Multiple people detected (2 people)
+2025-06-06 04:59:43,686 INFO: Skipping bench_press (251).mp4 - Multiple people detected (5 people)
+2025-06-06 04:59:43,753 INFO: Skipping bench_press (252).mp4 - Multiple people detected (2 people)
+2025-06-06 04:59:45,955 INFO: Skipping bench_press (253).mp4 - Multiple people detected (2 people)
+2025-06-06 04:59:51,683 WARNING: No valid keypoints detected in bench_press (254).mp4
+2025-06-06 04:59:51,752 INFO: Skipping bench_press (255).mp4 - Multiple people detected (2 people)
+2025-06-06 04:59:51,823 INFO: Skipping bench_press (256).mp4 - Multiple people detected (2 people)
+2025-06-06 04:59:53,140 INFO: Skipping bench_press (257).mp4 - Multiple people detected (2 people)
+2025-06-06 04:59:53,218 INFO: Skipping bench_press (258).mp4 - Multiple people detected (5 people)
+2025-06-06 05:00:05,187 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (259).npz (100 frames)
+2025-06-06 05:00:08,615 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (26).npz (3 frames)
+2025-06-06 05:00:20,641 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (260).npz (99 frames)
+2025-06-06 05:00:20,712 INFO: Skipping bench_press (261).mp4 - Multiple people detected (2 people)
+2025-06-06 05:00:20,774 INFO: Skipping bench_press (262).mp4 - Multiple people detected (5 people)
+2025-06-06 05:00:22,712 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (263).npz (6 frames)
+2025-06-06 05:00:22,783 INFO: Skipping bench_press (264).mp4 - Multiple people detected (3 people)
+2025-06-06 05:00:24,729 INFO: Skipping bench_press (265).mp4 - Multiple people detected (2 people)
+2025-06-06 05:00:29,981 INFO: Skipping bench_press (266).mp4 - Multiple people detected (2 people)
+2025-06-06 05:00:30,055 INFO: Skipping bench_press (267).mp4 - Multiple people detected (4 people)
+2025-06-06 05:00:30,660 INFO: Skipping bench_press (268).mp4 - Multiple people detected (2 people)
+2025-06-06 05:00:33,341 INFO: Skipping bench_press (269).mp4 - Multiple people detected (2 people)
+2025-06-06 05:00:33,412 INFO: Skipping bench_press (27).mp4 - Multiple people detected (5 people)
+2025-06-06 05:00:33,505 INFO: Skipping bench_press (270).mp4 - Multiple people detected (3 people)
+2025-06-06 05:00:33,577 INFO: Skipping bench_press (271).mp4 - Multiple people detected (2 people)
+2025-06-06 05:00:34,381 INFO: Skipping bench_press (272).mp4 - Multiple people detected (2 people)
+2025-06-06 05:00:34,446 INFO: Skipping bench_press (273).mp4 - Multiple people detected (2 people)
+2025-06-06 05:00:34,510 INFO: Skipping bench_press (274).mp4 - Multiple people detected (4 people)
+2025-06-06 05:00:34,571 INFO: Skipping bench_press (275).mp4 - Multiple people detected (4 people)
+2025-06-06 05:00:35,007 INFO: Skipping bench_press (28).mp4 - Multiple people detected (2 people)
+2025-06-06 05:00:35,271 INFO: Skipping bench_press (29).mp4 - Multiple people detected (2 people)
+2025-06-06 05:00:35,377 INFO: Skipping bench_press (3).mp4 - Multiple people detected (3 people)
+2025-06-06 05:00:36,691 ERROR: Cannot open video file C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\videos\bench_pressing\bench_press (30).mp4
+2025-06-06 05:00:36,759 INFO: Skipping bench_press (31).mp4 - Multiple people detected (3 people)
+2025-06-06 05:00:36,822 INFO: Skipping bench_press (32).mp4 - Multiple people detected (3 people)
+2025-06-06 05:00:37,212 INFO: Skipping bench_press (33).mp4 - Multiple people detected (2 people)
+2025-06-06 05:00:50,155 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (34).npz (100 frames)
+2025-06-06 05:01:02,612 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (35).npz (69 frames)
+2025-06-06 05:01:14,181 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (36).npz (59 frames)
+2025-06-06 05:01:14,873 INFO: Skipping bench_press (37).mp4 - Multiple people detected (2 people)
+2025-06-06 05:01:18,575 INFO: Skipping bench_press (38).mp4 - Multiple people detected (2 people)
+2025-06-06 05:01:20,765 INFO: Skipping bench_press (39).mp4 - Multiple people detected (2 people)
+2025-06-06 05:01:21,043 INFO: Skipping bench_press (4).mp4 - Multiple people detected (2 people)
+2025-06-06 05:01:21,128 INFO: Skipping bench_press (40).mp4 - Multiple people detected (3 people)
+2025-06-06 05:01:23,448 INFO: Skipping bench_press (41).mp4 - Multiple people detected (2 people)
+2025-06-06 05:01:23,720 INFO: Skipping bench_press (42).mp4 - Multiple people detected (3 people)
+2025-06-06 05:01:23,786 INFO: Skipping bench_press (43).mp4 - Multiple people detected (3 people)
+2025-06-06 05:01:23,857 INFO: Skipping bench_press (44).mp4 - Multiple people detected (2 people)
+2025-06-06 05:01:23,922 INFO: Skipping bench_press (45).mp4 - Multiple people detected (2 people)
+2025-06-06 05:01:25,631 WARNING: No valid keypoints detected in bench_press (46).mp4
+2025-06-06 05:01:25,717 INFO: Skipping bench_press (47).mp4 - Multiple people detected (2 people)
+2025-06-06 05:01:25,780 INFO: Skipping bench_press (48).mp4 - Multiple people detected (2 people)
+2025-06-06 05:01:37,847 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (49).npz (88 frames)
+2025-06-06 05:01:37,909 INFO: Skipping bench_press (5).mp4 - Multiple people detected (4 people)
+2025-06-06 05:01:37,975 INFO: Skipping bench_press (50).mp4 - Multiple people detected (2 people)
+2025-06-06 05:01:50,195 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (51).npz (79 frames)
+2025-06-06 05:01:52,933 WARNING: No valid keypoints detected in bench_press (52).mp4
+2025-06-06 05:01:54,172 INFO: Skipping bench_press (53).mp4 - Multiple people detected (2 people)
+2025-06-06 05:01:54,243 INFO: Skipping bench_press (54).mp4 - Multiple people detected (4 people)
+2025-06-06 05:02:07,445 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (55).npz (100 frames)
+2025-06-06 05:02:07,507 INFO: Skipping bench_press (56).mp4 - Multiple people detected (2 people)
+2025-06-06 05:02:07,568 INFO: Skipping bench_press (57).mp4 - Multiple people detected (2 people)
+2025-06-06 05:02:07,637 INFO: Skipping bench_press (58).mp4 - Multiple people detected (2 people)
+2025-06-06 05:02:09,909 INFO: Skipping bench_press (59).mp4 - Multiple people detected (2 people)
+2025-06-06 05:02:20,380 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (6).npz (68 frames)
+2025-06-06 05:02:20,949 ERROR: Cannot open video file C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\videos\bench_pressing\bench_press (60).mp4
+2025-06-06 05:02:21,014 INFO: Skipping bench_press (61).mp4 - Multiple people detected (4 people)
+2025-06-06 05:02:21,237 INFO: Skipping bench_press (62).mp4 - Multiple people detected (2 people)
+2025-06-06 05:02:21,301 INFO: Skipping bench_press (63).mp4 - Multiple people detected (2 people)
+2025-06-06 05:02:22,967 INFO: Skipping bench_press (64).mp4 - Multiple people detected (2 people)
+2025-06-06 05:02:23,090 INFO: Skipping bench_press (65).mp4 - Multiple people detected (2 people)
+2025-06-06 05:02:23,157 INFO: Skipping bench_press (66).mp4 - Multiple people detected (2 people)
+2025-06-06 05:02:24,612 INFO: Skipping bench_press (67).mp4 - Multiple people detected (2 people)
+2025-06-06 05:02:30,567 INFO: Skipping bench_press (68).mp4 - Multiple people detected (2 people)
+2025-06-06 05:02:30,639 INFO: Skipping bench_press (69).mp4 - Multiple people detected (3 people)
+2025-06-06 05:02:34,217 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (7).npz (5 frames)
+2025-06-06 05:02:45,376 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (70).npz (100 frames)
+2025-06-06 05:02:52,219 INFO: Skipping bench_press (71).mp4 - Multiple people detected (2 people)
+2025-06-06 05:02:57,099 INFO: Skipping bench_press (72).mp4 - Multiple people detected (2 people)
+2025-06-06 05:03:09,173 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (73).npz (70 frames)
+2025-06-06 05:03:12,791 INFO: Skipping bench_press (74).mp4 - Multiple people detected (2 people)
+2025-06-06 05:03:13,784 INFO: Skipping bench_press (75).mp4 - Multiple people detected (2 people)
+2025-06-06 05:03:13,854 INFO: Skipping bench_press (76).mp4 - Multiple people detected (4 people)
+2025-06-06 05:03:13,940 INFO: Skipping bench_press (77).mp4 - Multiple people detected (2 people)
+2025-06-06 05:03:17,065 INFO: Skipping bench_press (78).mp4 - Multiple people detected (2 people)
+2025-06-06 05:03:17,133 INFO: Skipping bench_press (79).mp4 - Multiple people detected (2 people)
+2025-06-06 05:03:17,730 INFO: Skipping bench_press (8).mp4 - Multiple people detected (2 people)
+2025-06-06 05:03:17,809 INFO: Skipping bench_press (80).mp4 - Multiple people detected (3 people)
+2025-06-06 05:03:21,557 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (81).npz (3 frames)
+2025-06-06 05:03:21,633 INFO: Skipping bench_press (82).mp4 - Multiple people detected (2 people)
+2025-06-06 05:03:22,361 INFO: Skipping bench_press (83).mp4 - Multiple people detected (2 people)
+2025-06-06 05:03:33,753 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (84).npz (80 frames)
+2025-06-06 05:03:40,875 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (85).npz (51 frames)
+2025-06-06 05:03:40,937 INFO: Skipping bench_press (86).mp4 - Multiple people detected (3 people)
+2025-06-06 05:03:44,252 INFO: Skipping bench_press (87).mp4 - Multiple people detected (2 people)
+2025-06-06 05:03:44,562 INFO: Skipping bench_press (88).mp4 - Multiple people detected (2 people)
+2025-06-06 05:03:45,279 INFO: Skipping bench_press (89).mp4 - Multiple people detected (2 people)
+2025-06-06 05:03:51,545 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (9).npz (23 frames)
+2025-06-06 05:04:02,845 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (90).npz (100 frames)
+2025-06-06 05:04:06,286 INFO: Skipping bench_press (91).mp4 - Multiple people detected (2 people)
+2025-06-06 05:04:16,774 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (92).npz (46 frames)
+2025-06-06 05:04:17,143 INFO: Skipping bench_press (93).mp4 - Multiple people detected (2 people)
+2025-06-06 05:04:29,459 INFO: Skipping bench_press (94).mp4 - Multiple people detected (2 people)
+2025-06-06 05:04:29,556 INFO: Skipping bench_press (95).mp4 - Multiple people detected (2 people)
+2025-06-06 05:04:29,621 INFO: Skipping bench_press (96).mp4 - Multiple people detected (3 people)
+2025-06-06 05:04:40,969 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (97).npz (100 frames)
+2025-06-06 05:04:41,041 INFO: Skipping bench_press (98).mp4 - Multiple people detected (5 people)
+2025-06-06 05:04:41,105 INFO: Skipping bench_press (99).mp4 - Multiple people detected (2 people)

@@ -13,7 +13,28 @@ def fill_nan_with_neighbors(arr):
     arr[mask] = np.interp(idx[mask], idx[~mask], arr[~mask])
     return arr
 
-def smooth_keypoints(kp_array, median_kernel=5, gaussian_sigma=1.5):
+def kalman_filter_1d(z, process_var=1e-3, measure_var=1e-3):
+    """1D constant-velocity Kalman filter.""" 
+    n = len(z)
+    x = np.array([z[0], 0.0])
+    P = np.eye(2)
+    F = np.array([[1.0, 1.0], [0.0, 1.0]])
+    H = np.array([[1.0, 0.0]])
+    Q = np.eye(2) * process_var
+    R = np.array([[measure_var]])
+    result = np.zeros(n)
+    for i in range(n):
+        x = F @ x
+        P = F @ P @ F.T + Q
+        y = z[i] - (H @ x)[0]
+        S = H @ P @ H.T + R
+        K = P @ H.T @ np.linalg.inv(S)
+        x = x + (K @ [[y]]).flatten()
+        P = (np.eye(2) - K @ H) @ P
+        result[i] = x[0]
+    return result
+
+def smooth_keypoints(kp_array, median_kernel, gaussian_sigma, apply_kalman):
 
     """
     kp_array: np.ndarray, shape = (T, K, 3)
@@ -22,7 +43,8 @@ def smooth_keypoints(kp_array, median_kernel=5, gaussian_sigma=1.5):
       - 마지막 축 [x, y, confidence]
     median_kernel: 홀수(3, 5, 7 등) - 메디안 필터 크기
     gaussian_sigma: 가우시안 필터 표준편차
-    반환: same shape, x/y 좌표에 메디안→가우시안 필터가 적용된 배열
+    apply_kalman: True이면 칼만 필터를 추가 적용
+    반환: same shape, x/y 좌표에 메디안→가우시안→(칼만) 필터가 적용된 배열
     """
     T, K, _ = kp_array.shape
     smoothed = kp_array.copy()
@@ -45,6 +67,10 @@ def smooth_keypoints(kp_array, median_kernel=5, gaussian_sigma=1.5):
         # 가우시안 필터로 부드럽게 스무딩
         xs_smooth = gaussian_filter(xs_med, sigma=gaussian_sigma, mode="nearest")
         ys_smooth = gaussian_filter(ys_med, sigma=gaussian_sigma, mode="nearest")
+        
+        if apply_kalman:
+            xs_smooth = kalman_filter_1d(xs_smooth)
+            ys_smooth = kalman_filter_1d(ys_smooth)
 
         smoothed[:, k, 0] = xs_smooth
         smoothed[:, k, 1] = ys_smooth
@@ -85,8 +111,9 @@ def process_all_keypoints():
                 data = np.load(src_path, allow_pickle=True)
                 kp = data["keypoints"]
                 
-                # 메디안→가우시안 필터 적용
-                kp_smoothed = smooth_keypoints(kp, median_kernel=5, gaussian_sigma=1.0)
+                # 메디안→가우시안→칼만 필터 적용
+                kp_smoothed = smooth_keypoints(kp, median_kernel=5, gaussian_sigma=1, apply_kalman=True)
+
                 
                 np.savez_compressed(
                     dst_path,
@@ -107,4 +134,4 @@ def process_all_keypoints():
 
 if __name__ == "__main__":
     process_all_keypoints()
-    print("\n모든 처리가 완료되었습니다.")
+    print("\n필터링 완료")
