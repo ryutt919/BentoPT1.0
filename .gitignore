@@ -6,7 +6,7 @@ outputs/
 __pycache__/
 .env
 pose-env/
-mmaction2/*
+
 .conda/
 
 *.pt
@@ -19,6 +19,7 @@ mmaction2/*
 *.dll
 *.pth
 
+mmaction2/*
 !mmaction2/data/
 !mmaction2/data/kinetics400/
 !mmaction2/data/kinetics400/normalized/
