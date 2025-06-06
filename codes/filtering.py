@@ -110,6 +110,13 @@ def process_all_keypoints():
             try:
                 data = np.load(src_path, allow_pickle=True)
                 kp = data["keypoints"]
+
+                T = kp.shape[0]
+                if T < 30:
+                    # 간단히 건너뛴다는 메시지를 출력하고 카운트만 증가
+                    print(f"\n삭제: {class_name}/{npz_file} → 프레임 수 {T} < 30")
+                    processed_files += 1
+                    continue
                 
                 # 메디안→가우시안→칼만 필터 적용
                 kp_smoothed = smooth_keypoints(kp, median_kernel=5, gaussian_sigma=1, apply_kalman=True)

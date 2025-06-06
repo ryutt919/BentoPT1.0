@@ -117,7 +117,7 @@ def visualize_keypoints_on_video(video_path, npz_path, auto_play=False):
         # 8) 화면 출력 → auto_play 모드에 따라 다르게 동작
         cv2.imshow('Keypoints 확인', frame)
         if auto_play:
-            key = cv2.waitKey(30)  # 30ms 대기 (약 33fps)
+            key = cv2.waitKey(0            )  # 30ms 대기 (약 33fps)
         else:
             key = cv2.waitKey(0)  # 키 입력 대기
 
@@ -160,7 +160,7 @@ def validate_keypoints_in_directory(class_name):
         
         try:
             # 키포인트 시각화 (자동 재생 모드로 시작)
-            key = visualize_keypoints_on_video(video_path, npz_path, auto_play=True)
+            key = visualize_keypoints_on_video(video_path, npz_path, auto_play=False)
             
             # ESC 키가 눌렸다면 다음 파일로
             if key == 27:
