@@ -1244,3 +1244,19 @@
 2025-06-06 05:04:40,969 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (97).npz (100 frames)
 2025-06-06 05:04:41,041 INFO: Skipping bench_press (98).mp4 - Multiple people detected (5 people)
 2025-06-06 05:04:41,105 INFO: Skipping bench_press (99).mp4 - Multiple people detected (2 people)
+2025-06-06 19:11:05,795 INFO: 총 5개 클래스 처리 예정
+2025-06-06 19:11:05,796 INFO: 총 비디오 파일 수: 3
+2025-06-06 19:11:05,796 INFO: 이미 처리된 파일 수: 0
+2025-06-06 19:11:05,796 INFO: 처리해야 할 파일 수: 3
+2025-06-06 19:11:05,796 INFO: 사용할 CPU 코어 수: 2
+2025-06-06 19:11:16,164 INFO: Skipping bench_press (997).mp4 - Multiple people detected (2 people)
+2025-06-06 19:11:16,253 INFO: Skipping bench_press (998).mp4 - Multiple people detected (3 people)
+2025-06-06 19:11:33,532 INFO: Skipping bench_press (999).mp4 - Multiple people detected (2 people)
+2025-06-06 19:14:33,506 INFO: 총 5개 클래스 처리 예정
+2025-06-06 19:14:33,507 INFO: 총 비디오 파일 수: 3
+2025-06-06 19:14:33,507 INFO: 이미 처리된 파일 수: 0
+2025-06-06 19:14:33,507 INFO: 처리해야 할 파일 수: 3
+2025-06-06 19:14:33,507 INFO: 사용할 CPU 코어 수: 2
+2025-06-06 19:15:16,403 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (997).npz (238 frames)
+2025-06-06 19:16:39,986 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (998).npz (461 frames)
+2025-06-06 19:18:16,676 INFO: Keypoints data saved to: C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\keypoints\bench_pressing\bench_press (999).npz (615 frames)

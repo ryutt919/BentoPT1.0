@@ -67,7 +67,7 @@ def visualize_keypoints_on_video(video_path, npz_path, auto_play=False):
     # 5) 영상 열기
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
-        print(f"Error: 영상 파일을 열 수 없습니다 → {video_path}")
+        print(f"Error: 영상 파일을 열 수 없습니다 → {video_path}")        
         return
 
     # 6) 프레임 단위로 오버레이
@@ -139,7 +139,19 @@ def validate_keypoints_in_directory(class_name):
     npz_dir = os.path.join(base_dir, "smoothed", class_name)
 
     # NPZ 파일 목록 가져오기
-    npz_files = [f for f in os.listdir(npz_dir) if f.endswith('.npz')]
+
+    import re
+
+    def numeric_key(filename):
+        # 숫자만 추출해서 int로 반환 (예: "10.npz" → 10)
+        name = os.path.splitext(filename)[0]
+        match = re.search(r'\d+', name)
+        return int(match.group()) if match else float('inf')
+
+    npz_files = sorted(
+        [f for f in os.listdir(npz_dir) if f.endswith('.npz')],
+        key=numeric_key
+    ) 
     total_files = len(npz_files)
     
     print(f"\n{class_name} 클래스의 총 {total_files}개 NPZ 파일을 검증합니다.")

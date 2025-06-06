@@ -112,10 +112,10 @@ def process_video(video_path, class_name, file_count, frame_interval=3):
         detect_results = DETECT_MODEL(frame, classes=[0], conf=0.5, verbose=False)[0]
         
         # 두 명 이상이 감지되면 이 영상은 건너뛰기
-        if len(detect_results.boxes) > 1:
-            logging.info(f"Skipping {video_filename} - Multiple people detected ({len(detect_results.boxes)} people)")
-            cap.release()
-            return
+        # if len(detect_results.boxes) > 1:
+        #     logging.info(f"Skipping {video_filename} - Multiple people detected ({len(detect_results.boxes)} people)")
+        #     cap.release()
+        #     return
             
         # 감지된 사람이 없으면 다음 프레임으로
         if len(detect_results.boxes) == 0:
@@ -184,7 +184,7 @@ def process_class_videos(class_name, video_dir):
         process_video(video_path, class_name, file_count, frame_interval=3)
 
 def main():
-    video_dir = r'C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\videos'
+    video_dir = r'C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\mmaction2\data\kinetics400\videos999'
     class_names = [d for d in os.listdir(video_dir) if os.path.isdir(os.path.join(video_dir, d))]
     logging.info(f"총 {len(class_names)}개 클래스 처리 예정")
     

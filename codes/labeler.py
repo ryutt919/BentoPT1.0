@@ -40,7 +40,7 @@ def visualize_keypoints_on_frame(frame, kpts, keypoint_names, skeleton_links):
             x2, y2 = int(kpts[j, 0]), int(kpts[j, 1])
             cv2.line(frame, (x1, y1), (x2, y2), WHITE, 2)
 
-def label_and_visualize(video_path, npz_path, class_name):
+def label_and_visualize(video_path, npz_path, class_name, npz_file):
     """
     NPZ 키포인트를 시각화하면서 한 프레임씩 라벨링을 수행합니다.
     - 스페이스바: 현재 선택된 라벨들을 저장(라벨이 있을 때만)하고 다음 프레임으로 이동
@@ -83,30 +83,7 @@ def label_and_visualize(video_path, npz_path, class_name):
     ]
 
     # 4) 라벨 키맵 정의 (키코드 → 라벨 문자열)
-    label_map = {
-        ord('0'): 'outlier',
-        ord('1'): 'good',
-        ord('2'): 'elbow_not_vertical',
-        ord('3'): 'knee_over_toes',
-        ord('4'): 'back_round',
-        ord('5'): 'back_hyperextend',
-        ord('6'): 'knee_valgus',
-        ord('7'): 'foot_unstable',
-        ord('8'): 'torso_lean_forward',
-        ord('9'): 'torso_shaking',
-        ord('a'): 'hand_position_bad',
-        ord('k'): 'elbow_flare',
-        ord('p'): 'rear_knee_touch',
-        ord('q'): 'wrist_bent',
-        ord('r'): 'shoulder_raise',
-        ord('t'): 'grip_unstable',
-        ord('u'): 'hip_excessive_move',
-        ord('v'): 'spine_imbalance',
-        ord('w'): 'neck_forward',
-        ord('x'): 'hip_asymmetry',
-        ord('y'): 'weight_shift_back',
-        ord('z'): 'shoulder_asymmetry'
-    }
+
 
     # 5) 비디오 열기
     cap = cv2.VideoCapture(video_path)
@@ -125,6 +102,91 @@ def label_and_visualize(video_path, npz_path, class_name):
     os.makedirs(labels_dir, exist_ok=True)
     video_basename = os.path.splitext(os.path.basename(video_path))[0]
     csv_path = os.path.join(labels_dir, f"{video_basename}.csv")
+
+    LABEL_MAP_BY_CLASS = {
+        "bench_pressing": {
+            ord('w'): 'outlier',
+            ord('a'): 'good',                 # 올바른 자세 (Good)
+            ord('s'): 'elbow_not_vertical',    # 팔꿈치 수직 아님
+            ord('d'): 'hand_position_bad',     # 손 위치 부적절
+            ord('f'): 'elbow_flare',            # 팔꿈치가 몸통과 너무 벌어짐
+            ord('g'): 'wrist_bent',            # 손목 꺾임
+            ord('h'): 'shoulder_raise',        # 어깨 올라감
+            ord('j'): 'grip_unstable',         # 그립 불안정
+            ord('k'): 'spine_imbalance',       # 척추 불균형
+            ord('l'): 'shoulder_asymmetry',    # 어깨 불균형
+            ord(';'): 'barbell_unbalanced',    # 바벨 불균형 (임의로 ‘;’ 키 사용)
+            ord('n'): 'max_contraction_needed',# 최대 수축 필요
+            ord('m'): 'max_relaxation_needed', # 최대 이완 필요
+        },
+        "lunge": {
+            ord('w'): 'outlier',
+            ord('a'): 'good',                  # 올바른 자세 (Good)
+            ord('s'): 'elbow_not_vertical',    # 팔꿈치 수직 아님
+            ord('d'): 'knee_over_toes',        # 무릎이 발끝을 넘어감
+            ord('f'): 'back_round',            # 허리 굽음
+            ord('g'): 'back_hyperextend',      # 허리 과신전
+            ord('h'): 'knee_valgus',           # 무릎 내전
+            ord('j'): 'foot_unstable',         # 발 위치 불안정
+            ord('k'): 'torso_lean_forward',    # 상체 과도한 앞으로 숙임
+            ord('l'): 'torso_shaking',         # 몸통 흔들림
+            ord('z'): 'spine_imbalance',       # 척추 불균형
+            ord('x'): 'rear_knee_touch',       # 뒷다리 무릎 바닥에 닿음
+            ord('c'): 'weight_shift_back',     # 무게중심 뒤로 쏠림
+            ord('v'): 'hip_excessive_move',    # 엉덩이 과도하게 올라감/내려감
+            ord('b'): 'hip_asymmetry',         # 엉덩이 좌우 비대칭
+            ord('n'): 'max_contraction_needed',# 최대 수축 필요
+            ord('m'): 'max_relaxation_needed', # 최대 이완 필요
+        },
+        "pull_ups": {
+            ord('w'): 'outlier',
+            ord('a'): 'good',                  # 올바른 자세 (Good)
+            ord('s'): 'neck_forward',          # 목 앞으로 내밀기
+            ord('d'): 'shoulder_raise',        # 어깨 올라감
+            ord('f'): 'wrist_bent',            # 손목 꺾임
+            ord('g'): 'grip_unstable',         # 그립 불안정
+            ord('h'): 'torso_shaking',         # 몸통 흔들림
+            ord('j'): 'spine_imbalance',       # 척추 불균형
+            ord('k'): 'shoulder_asymmetry',    # 어깨 불균형
+            ord('n'): 'max_contraction_needed',# 최대 수축 필요
+            ord('m'): 'max_relaxation_needed', # 최대 이완 필요            
+        },
+        "push_up": {
+            ord('w'): 'outlier',
+            ord('a'): 'good',                  # 올바른 자세 (Good)
+            ord('s'): 'elbow_not_vertical',    # 팔꿈치 수직 아님
+            ord('d'): 'hand_position_bad',     # 손 위치 부적절
+            ord('f'): 'elbow_flare',           # 팔꿈치가 몸통과 너무 벌어짐
+            ord('g'): 'wrist_bent',            # 손목 꺾임
+            ord('h'): 'shoulder_raise',        # 어깨 올라감
+            ord('j'): 'grip_unstable',         # 그립 불안정
+            ord('k'): 'neck_forward',          # 목 앞으로 내밀기
+            ord('l'): 'torso_shaking',         # 몸통 흔들림
+            ord('z'): 'spine_imbalance',       # 척추 불균형
+            ord('x'): 'shoulder_asymmetry',    # 어깨 불균형
+            ord('n'): 'max_contraction_needed',# 최대 수축 필요
+            ord('m'): 'max_relaxation_needed', # 최대 이완 필요            
+        },
+        "squat": {
+            ord('w'): 'outlier',
+            ord('a'): 'good',                  # 올바른 자세 (Good)
+            ord('s'): 'knee_over_toes',        # 무릎이 발끝을 넘어감
+            ord('d'): 'back_round',            # 허리 굽음
+            ord('f'): 'back_hyperextend',      # 허리 과신전
+            ord('g'): 'knee_valgus',           # 무릎 내전
+            ord('h'): 'foot_unstable',         # 발 위치 불안정
+            ord('j'): 'torso_lean_forward',    # 상체 과도한 앞으로 숙임
+            ord('k'): 'torso_shaking',         # 몸통 흔들림
+            ord('l'): 'spine_imbalance',       # 척추 불균형
+            ord('z'): 'weight_shift_back',     # 무게중심 뒤로 쏠림
+            ord('x'): 'hip_excessive_move',    # 엉덩이 과도하게 올라감/내려감
+            ord('c'): 'hip_asymmetry',         # 엉덩이 좌우 비대칭
+            ord('n'): 'max_contraction_needed',# 최대 수축 필요
+            ord('m'): 'max_relaxation_needed', # 최대 이완 필요  w w  w  w              
+        },
+    }
+    
+    label_map = LABEL_MAP_BY_CLASS[class_name]
 
     # 7) 메인 루프
     while idx < total_records:
@@ -154,9 +216,12 @@ def label_and_visualize(video_path, npz_path, class_name):
         new_h = int(height * scale)
         frame_resized = cv2.resize(frame, (new_w, new_h))
 
+        cv2.putText(frame_resized, f" Record {idx+1}/{total_records}",
+            (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,255), 2)  
+
 
         # 7-4) 화면 출력 및 키 입력 대기
-        cv2.imshow('labeling', frame_resized)
+        cv2.imshow(f'{npz_file}', frame_resized)
         key = cv2.waitKey(0)  # 수동 진행: 키 입력 대기
 
         # 8) 키 처리 로직
@@ -164,6 +229,18 @@ def label_and_visualize(video_path, npz_path, class_name):
             print("사용자가 ESC를 눌러 라벨링을 종료했습니다.")
             break
 
+        elif key == ord('i'): 
+            idx = max(0, idx - 1)
+            selected_labels.clear()
+            print(f"이전 프레임으로 이동: Record {idx+1}/{total_records}")
+            continue
+
+        elif key == ord('p'):
+            idx = min(total_records - 1, idx + 1)
+            selected_labels.clear()
+            print(f"다음 프레임으로 이동: Record {idx+1}/{total_records}")
+            continue
+        
         elif key == 8:  # Backspace: 가장 최근 레코드 삭제 후 이전 프레임으로 이동
             if records:
                 last_frame, _, _ = records.pop()
@@ -183,6 +260,10 @@ def label_and_visualize(video_path, npz_path, class_name):
             else:
                 print(f"프레임 {frame_num}에는 라벨이 없어 저장하지 않습니다.")
             selected_labels.clear()
+            idx += 1
+            continue
+        elif key == ord('w'):  # 'w': outlier
+            print("outlier 라벨 선택")
             idx += 1
             continue
 
@@ -228,7 +309,18 @@ def validate_keypoints_in_directory(class_name):
         print(f"Error: 디렉토리를 확인하세요 → {video_dir}, {npz_dir}")
         return
 
-    npz_files = [f for f in os.listdir(npz_dir) if f.endswith('.npz')]
+    import re
+
+    def numeric_key(filename):
+        # 숫자만 추출해서 int로 반환 (예: "10.npz" → 10)
+        name = os.path.splitext(filename)[0]
+        match = re.search(r'\d+', name)
+        return int(match.group()) if match else float('inf')
+
+    npz_files = sorted(
+        [f for f in os.listdir(npz_dir) if f.endswith('.npz')],
+        key=numeric_key
+    )    
     total_files = len(npz_files)
 
     print(f"\n{class_name} 클래스의 총 {total_files}개 NPZ 파일을 라벨링합니다.")
@@ -245,7 +337,7 @@ def validate_keypoints_in_directory(class_name):
 
         print(f"[{idx}/{total_files}] 라벨링: {npz_file}")
         try:
-            label_and_visualize(video_path, npz_path, class_name)
+            label_and_visualize(video_path, npz_path, class_name,npz_file )
         except KeyboardInterrupt:
             print("\n사용자가 전체 라벨링을 중단했습니다.")
             break
