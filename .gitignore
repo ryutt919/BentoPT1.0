@@ -18,3 +18,6 @@ mmaction2/
 *.png
 *.dll
 *.pth
+
+!mmaction2/data/kinetics400/normalized/
+!mmaction2/data/kinetics400/normalized/**
