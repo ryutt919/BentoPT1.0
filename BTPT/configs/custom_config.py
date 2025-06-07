@@ -1,11 +1,17 @@
-ann_file_train = 'C:/Users/kimt9/Desktop/RyuTTA/2025_3_1/ComputerVision/TermP/data/pkl/train.pkl'
-ann_file_val = 'C:/Users/kimt9/Desktop/RyuTTA/2025_3_1/ComputerVision/TermP/data/pkl/val.pkl'
+import os
+
+# 기본 경로 설정
+base_dir = 'data'
+class_name = 'pull_ups'  # 현재 처리 중인 클래스 이름
+ann_file_train = os.path.join(base_dir, class_name, 'pkl', 'train.pkl')
+ann_file_val = os.path.join(base_dir, class_name, 'pkl', 'val.pkl')
+
 auto_scale_lr = dict(base_batch_size=128, enable=False)
-data_root = 'C:/Users/kimt9/Desktop/RyuTTA/2025_3_1/ComputerVision/TermP'
+data_root = '.'
 dataset_type = 'PoseDataset'
 default_hooks = dict(
     checkpoint=dict(interval=1, save_best='auto', type='CheckpointHook'),
-    logger=dict(ignore_last=False, interval=100, type='LoggerHook'),
+    logger=dict(ignore_last=False, interval=1, type='LoggerHook'),
     param_scheduler=dict(type='ParamSchedulerHook'),
     runtime_info=dict(type='RuntimeInfoHook'),
     sampler_seed=dict(type='DistSamplerSeedHook'),
@@ -17,7 +23,7 @@ env_cfg = dict(
     dist_cfg=dict(backend='nccl'),
     mp_cfg=dict(mp_start_method='fork', opencv_num_threads=0))
 launcher = 'none'
-load_from = 'mmaction2/work_dirs/custom_stgcnpp/epoch_50.pth'
+load_from = None
 log_level = 'INFO'
 log_processor = dict(by_epoch=True, type='LogProcessor', window_size=20)
 model = dict(
@@ -28,7 +34,7 @@ model = dict(
         in_channels=3,
         tcn_type='mstcn',
         type='STGCN'),
-    cls_head=dict(in_channels=256, num_classes=13, type='GCNHead'),
+    cls_head=dict(in_channels=256, num_classes=9, type='GCNHead'),
     type='RecognizerGCN')
 optim_wrapper = dict(
     optimizer=dict(
@@ -47,8 +53,7 @@ test_cfg = dict(type='TestLoop')
 test_dataloader = dict(
     batch_size=1,
     dataset=dict(
-        ann_file=
-        'C:/Users/kimt9/Desktop/RyuTTA/2025_3_1/ComputerVision/TermP/data/pkl/val.pkl',
+        ann_file=ann_file_val,
         pipeline=[
             dict(type='PreNormalize2D'),
             dict(dataset='coco', feats=[
@@ -70,7 +75,14 @@ test_dataloader = dict(
     persistent_workers=True,
     sampler=dict(shuffle=False, type='DefaultSampler'))
 test_evaluator = [
-    dict(type='AccMetric'),
+    dict(
+        type='AccMetric',
+        metric_list=('top_k_accuracy', 'mean_class_accuracy'),
+        metric_options={
+            'top_k_accuracy': {'topk': (1, 3)}  # top-1과 top-3 정확도
+        }
+    ),
+    dict(type='ConfusionMatrix')
 ]
 test_pipeline = [
     dict(type='PreNormalize2D'),
@@ -88,8 +100,7 @@ train_cfg = dict(
 train_dataloader = dict(
     batch_size=16,
     dataset=dict(
-        ann_file=
-        'C:/Users/kimt9/Desktop/RyuTTA/2025_3_1/ComputerVision/TermP/data/pkl/train.pkl',
+        ann_file=ann_file_train,
         pipeline=[
             dict(type='PreNormalize2D'),
             dict(dataset='coco', feats=[
@@ -98,7 +109,16 @@ train_dataloader = dict(
             dict(clip_len=32, type='UniformSampleFrames'),
             dict(type='PoseDecode'),
             dict(num_person=1, type='FormatGCNInput'),
-            dict(type='PackActionInputs'),
+            dict(
+                meta_keys=(
+                    'frame_dir',
+                    'total_frames',
+                    'label',
+                    'start_index',
+                    'modality',
+                    'fps',
+                ),
+                type='PackActionInputs'),
         ],
         split='xsub_train',
         type='PoseDataset'),
@@ -119,8 +139,7 @@ val_cfg = dict(type='ValLoop')
 val_dataloader = dict(
     batch_size=16,
     dataset=dict(
-        ann_file=
-        'C:/Users/kimt9/Desktop/RyuTTA/2025_3_1/ComputerVision/TermP/data/pkl/val.pkl',
+        ann_file=ann_file_val,
         pipeline=[
             dict(type='PreNormalize2D'),
             dict(dataset='coco', feats=[
@@ -133,7 +152,16 @@ val_dataloader = dict(
                 type='UniformSampleFrames'),
             dict(type='PoseDecode'),
             dict(num_person=1, type='FormatGCNInput'),
-            dict(type='PackActionInputs'),
+            dict(
+                meta_keys=(
+                    'frame_dir',
+                    'total_frames',
+                    'label',
+                    'start_index',
+                    'modality',
+                    'fps',
+                ),
+                type='PackActionInputs'),
         ],
         split='xsub_val',
         test_mode=True,
@@ -142,7 +170,14 @@ val_dataloader = dict(
     persistent_workers=True,
     sampler=dict(shuffle=False, type='DefaultSampler'))
 val_evaluator = [
-    dict(type='AccMetric'),
+    dict(
+        type='AccMetric',
+        metric_list=('top_k_accuracy', 'mean_class_accuracy'),
+        metric_options={
+            'top_k_accuracy': {'topk': (1, 3)}  # top-1과 top-3 정확도
+        }
+    ),
+    dict(type='ConfusionMatrix')
 ]
 val_pipeline = [
     dict(type='PreNormalize2D'),
@@ -155,11 +190,39 @@ val_pipeline = [
     dict(type='PackActionInputs'),
 ]
 vis_backends = [
-    dict(type='LocalVisBackend'),
     dict(type='TensorboardVisBackend'),
 ]
 visualizer = dict(
-    type='ActionVisualizer', vis_backends=[
-        dict(type='LocalVisBackend'),
+    name='visualizer',
+    type='ActionVisualizer',
+    vis_backends=[
+        dict(type='TensorboardVisBackend'),
     ])
-work_dir = './work_dirs\\custom_stgcnpp'
+# 작업 디렉토리 설정 및 생성
+
+work_dir = os.path.join('models', class_name)
+if not os.path.exists(work_dir):
+    os.makedirs(work_dir)
+
+# 로그 저장 경로 설정
+log_dir = os.path.join(work_dir, 'logs')
+vis_dir = os.path.join(work_dir, 'vis_data')
+
+default_hooks.update({
+    'logger': dict(
+        type='LoggerHook',
+        interval=1,
+        ignore_last=False    )
+})
+
+visualizer.update({
+    'vis_backends': [
+        dict(
+            type='TensorboardVisBackend'        )
+    ]
+})
+
+# 디렉토리 생성
+for d in [work_dir, log_dir, vis_dir]:
+    if not os.path.exists(d):
+        os.makedirs(d)

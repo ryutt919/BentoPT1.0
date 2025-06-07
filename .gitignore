@@ -20,8 +20,6 @@ pose-env/
 *.pth
 
 mmaction2/*
-!mmaction2/data/
-!mmaction2/data/kinetics400/
-!mmaction2/data/kinetics400/normalized/
-!mmaction2/data/kinetics400/normalized/**
-!mmaction2/work_dirs/custom_stgcnpp/custom_stgcnpp.py
+work_dirs/
+
+codes/
