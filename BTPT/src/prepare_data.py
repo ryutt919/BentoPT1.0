@@ -18,7 +18,7 @@ def load_label_map():
         print(f"\n경고: {label_map_path}를 찾을 수 없습니다.")
         return None
 
-def get_sequence_windows(keypoints, frame_numbers, labels_df, window_size=24, stride=8):
+def get_sequence_windows(keypoints, frame_numbers, labels_df, window_size=8, stride=4):
     """슬라이딩 윈도우 방식으로 시퀀스 생성"""
     T = len(frame_numbers)
     sequences = []

@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 
 def get_label_names():
-    label_map_path = r"C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\BTPT\data\pull_ups\LABEL_MAP.json"
+    label_map_path = r"C:\Users\kimt9\Desktop\RyuTTA\2025_3_1\ComputerVision\TermP\BTPT\data\lunge\LABEL_MAP.json"
     try:
         with open(label_map_path, 'r', encoding='utf-8') as f:
             label_map = json.load(f)

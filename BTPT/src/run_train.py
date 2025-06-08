@@ -15,7 +15,7 @@ if __name__ == "__main__":
         sys.argv[0],  # 스크립트 이름
         'configs/custom_config.py',  # config 파일 경로
         '--work-dir', 'models/'+ train_class_name,  # 작업 디렉토리
-        # '--seed', '42',  # 랜덤 시드
+        '--seed', '42',  # 랜덤 시드
     ]
     
     # 선택적 인자 추가
