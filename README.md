@@ -66,17 +66,30 @@ OpenCV와 Python 기반의 이 시스템은 사용자가 짧은 운동 영상과
 - **라벨 없는 시퀀스**에 대해 학습된 모델로 예측 수행
 - **신뢰도 기준 이상(≥ 0.8)**인 예측 결과만 가짜 라벨로 추가
 - Pseudo-label 데이터까지 포함해 학습 데이터셋 확장 및 성능 향상
+- 학습 결과
+- 런지
+- top1
+![image](https://github.com/user-attachments/assets/45666544-166d-432a-8bb2-597ed9636b7c)
+-top3
+![image](https://github.com/user-attachments/assets/c5d4f81e-c834-4ebb-8c96-014f4fcf7302)
+- 풀업
+- top1
+
+![image](https://github.com/user-attachments/assets/9543df6e-479c-485a-b9e3-11194ca070b6)
+- top3
+![image](https://github.com/user-attachments/assets/9e661e8f-f3be-47c4-b6fb-fade493d7a2c)
 
 ---
 
 ### 7.  키포인트 시각화 및 피드백 제공
 - GUI를 통한 편리한 사용 제공
+- ![image](https://github.com/user-attachments/assets/fc884bbe-7b65-4745-8b33-d6f1a2005cf1)
+
 - **OpenCV** 기반 실시간 키포인트/스켈레톤 오버레이
 - 관절 연결선 + 발목-무릎 보조선 포함
 - 실시간 피드백 제공
-![image](https://github.com/user-attachments/assets/558d1a7e-1b03-460d-9a75-9d626525b801)
-![image](https://github.com/user-attachments/assets/fc884bbe-7b65-4745-8b33-d6f1a2005cf1)
-![image](https://github.com/user-attachments/assets/ae76982d-cff3-4648-87aa-19268366e8e7)
+- ![image](https://github.com/user-attachments/assets/ae76982d-cff3-4648-87aa-19268366e8e7)
+
 
 ---
 
