@@ -115,7 +115,7 @@ class PoseVisualizer:
             
             # 피드백이 있는 경우
             if feedback_list:
-                y_base = 30  # 기본 y 위치
+                y_base = 15  # 기본 y 위치
                 
                 # 디버깅: 총 피드백 수 표시
                 cv.putText(overlay, f"Total feedback: {len(feedback_list)}", 
@@ -135,19 +135,44 @@ class PoseVisualizer:
                     else:
                         color = self.colors['feedback_good']
                     
-                    # 피드백 메시지 표시
-                    y_pos = y_base + (i * 30)
-                    text = f"{message} (conf:{confidence:.2f}, pri:{priority})"
-                    cv.putText(overlay, text, (10, y_pos), 
-                             cv.FONT_HERSHEY_SIMPLEX, 0.7, color, 2, cv.LINE_AA)
-            else:
-                # 피드백이 없으면 "올바른 자세" 메시지 표시
-                cv.putText(overlay, "올바른 자세입니다", (10, 30),
-                          cv.FONT_HERSHEY_SIMPLEX, 0.7, 
-                          self.colors['feedback_good'], 2, cv.LINE_AA)
+
         
         # 4) 알파 블렌딩으로 오버레이 적용
         alpha = 0.6
         cv.addWeighted(overlay, alpha, frame, 1 - alpha, 0, frame)
+        
+        # 분석 결과 오버레이
+        if result is not None and result.get("feedback"):
+            # PIL Image로 변환하여 한글 텍스트 렌더링
+            from PIL import Image, ImageDraw, ImageFont
+            
+            # BGR to RGB 변환
+            rgb_frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
+            pil_image = Image.fromarray(rgb_frame)
+            draw = ImageDraw.Draw(pil_image)
+            
+            # 한글 폰트 로드
+            try:
+                font = ImageFont.truetype("malgun.ttf", 24)  # 폰트 크기 32 -> 24로 감소
+            except:
+                font = ImageFont.load_default()
+            
+            # 피드백 텍스트 그리기
+            y_offset = 15  # 시작 위치를 더 위로 (40 -> 25)
+            for feedback in result["feedback"]:
+                message = f"• {feedback['message']}"
+                
+                # 검은색 외곽선 (8방향)
+                for dx, dy in [(-2,-2), (-2,0), (-2,2), 
+                               (0,-2), (0,2),
+                               (2,-2), (2,0), (2,2)]:
+                    draw.text((19+dx, y_offset+dy), message, font=font, fill=(0,0,0))  # x좌표 39->19로 변경
+                
+                # 흰색 텍스트
+                draw.text((20, y_offset), message, font=font, fill=(255,255,255))  # x좌표 40->20으로 변경
+                y_offset += 25  # 줄 간격 45->35로 감소
+            
+            # PIL Image를 다시 OpenCV 형식으로 변환
+            frame = cv.cvtColor(np.array(pil_image), cv.COLOR_RGB2BGR)
         
         return frame

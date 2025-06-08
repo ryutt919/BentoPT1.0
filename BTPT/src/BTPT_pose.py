@@ -8,8 +8,8 @@ from mmengine.config import Config
 from mmaction.apis import init_recognizer
 from typing import Tuple, List, Optional, Dict
 from mmengine.dataset import Compose  
-from mmaction.datasets.transforms.formatting import FormatGCNInput, PackActionInputs  
-
+from mmaction.datasets.transforms.formatting import FormatGCNInput, PackActionInputs
+from scipy.ndimage import median_filter, gaussian_filter
 
 class PoseEstimator:
     def __init__(self):
@@ -32,19 +32,17 @@ class PoseEstimator:
             'left_knee', 'right_knee', 'left_ankle', 'right_ankle'
         ]
         
-        # 런지 동작 클래스 매핑
+        # 클래스 매핑 수정 (9개 클래스로)
         self.class_names = {
-            -1: "분석 중...",
             0: "판별 불가",
             1: "올바른 자세",
-            2: "무릎이 발끝을 넘어감",
+            2: "무릎 90도 미만 주의의",
             3: "등이 구부러짐",
             4: "발이 불안정함",
             5: "몸통이 흔들림",
             6: "뒷무릎이 바닥에 닿음",
-            7: "무게중심이 뒤로 쏠림",
-            8: "최대 수축 필요",
-            9: "최대 이완 필요"
+            7: "최대 수축 필요",
+            8: "최대 이완 필요"
         }
         
         # 피드백 리스트 관리
@@ -63,20 +61,28 @@ class PoseEstimator:
             FormatGCNInput(num_person=1),
             PackActionInputs()
         ])
+        
+        self.prediction_buffer = deque(maxlen=10)
+        self.confidence_threshold = 0.7
 
-    def _load_stgcn_model(self, config_path: str,
-                         checkpoint_path: str,
-                         device: str = "cuda:0",
-                         topk: int = 5) -> Dict:
-        cfg   = Config.fromfile(config_path)
+    def _load_stgcn_model(self, config_path: str, checkpoint_path: str, device: str = "cuda:0", topk: int = 5) -> Dict:
+        cfg = Config.fromfile(config_path)
         model = init_recognizer(cfg, checkpoint_path, device=device)
         model.eval()
+        
+        # 모델 구조 출력
+        print("\n[DEBUG] Model Structure:")
+        print(model)
+        
+        # 가중치 통계 출력
+        total_params = sum(p.numel() for p in model.parameters())
+        print(f"\n[DEBUG] Total parameters: {total_params:,}")
+        
         return {"model": model, "device": device, "topk": topk}        
         
-    def extract_keypoints(self, frame: np.ndarray, 
-                         frame_number: int) -> Optional[np.ndarray]:
-        """한 프레임에서 키포인트 추출"""
-        results = self.pose_model(frame, conf=0.3, verbose=False)[0]  # 낮은 confidence도 허용
+    def extract_keypoints(self, frame: np.ndarray, frame_number: int) -> Optional[np.ndarray]:
+        """한 프레임에서 키포인트 추출 - 메디안/가우시안 필터 적용"""
+        results = self.pose_model(frame, conf=0.5, verbose=False)[0]
         
         if results.keypoints is None:
             return None
@@ -91,18 +97,34 @@ class PoseEstimator:
         if len(keypoints) != 17:
             return None
             
-        # 중앙값 필터로 노이즈 감소
         coords = keypoints[:, :2]  # (V, 2)
         conf = keypoints[:, 2:]    # (V, 1)
         
-        # 시간축으로 중앙값 필터링 수행
+        # (0,0) 좌표와 낮은 신뢰도 처리
         if len(self.keypoints_buffer) > 0:
             prev_coords = np.array(self.keypoints_buffer)[-1, :, :2]
-            coords = (coords + prev_coords) / 2  # 이전 프레임과 평균
+            zero_mask = np.all(coords == 0, axis=1)
+            low_conf_mask = conf[:, 0] < 0.3
             
+            # 이전 프레임 좌표로 대체
+            coords[zero_mask | low_conf_mask] = prev_coords[zero_mask | low_conf_mask]
+        
+        # 시간적 필터링 (최근 5 프레임)
+        if len(self.keypoints_buffer) >= 5:
+            recent_frames = np.array([frame[:, :2] for frame in list(self.keypoints_buffer)[-5:]])
+            recent_frames = np.concatenate([recent_frames, coords[np.newaxis, ...]], axis=0)
+            
+            # 메디안 필터 (시간축)
+            filtered_coords = median_filter(recent_frames, size=(3,1,1))[-1]
+            
+            # 가우시안 필터 (공간축)
+            # filtered_coords = gaussian_filter(filtered_coords, sigma=0.5)
+            
+            coords = filtered_coords
+        
         # 필터링된 좌표와 confidence 재결합
         keypoints = np.concatenate([coords, conf], axis=1)
-            
+        
         return keypoints
         
     def process_frame(self, frame: np.ndarray, frame_number: int) -> Optional[Dict]:
@@ -123,119 +145,103 @@ class PoseEstimator:
         return None
         
     def analyze_pose(self) -> Optional[Dict]:
-        """슬라이딩 윈도우로 현재 포즈 시퀀스 분석 (파이프라인 + permute 적용)"""
-        # 1) 충분한 버퍼 확인
+        """슬라이딩 윈도우로 현재 포즈 시퀀스 분석"""
         if len(self.keypoints_buffer) < self.window_size:
-            print(f"[DEBUG] Buffer not full: {len(self.keypoints_buffer)}/{self.window_size}")
             return None
 
-        # 2) 시퀀스 배열화
-        seq      = list(self.keypoints_buffer)[-self.window_size:]
+        # 시퀀스 배열화
+        seq = list(self.keypoints_buffer)[-self.window_size:]
         sequence = np.array(seq, dtype=np.float32)       # (T, V, 3)
-        print(f"[DEBUG] Raw sequence shape: {sequence.shape}")
 
-        # 3) coords & confidence 분리
+        # coords & confidence 분리
         coords = sequence[:, :, :2]                      # (T, V, 2)
-        conf   = sequence[:, :, 2:]                      # (T, V, 1)
-        score3d = conf[..., 0]                           # (T, V)
+        conf = sequence[:, :, 2:]                        # (T, V, 1)
+        score3d = conf[..., 0]                          # (T, V)
 
-        # 4) 파이프라인 입력 dict 구성
+        # 좌표 정규화 추가
+        coords_min = coords.min(axis=(0, 1), keepdims=True)
+        coords_max = coords.max(axis=(0, 1), keepdims=True)
+        coords_normalized = (coords - coords_min) / (coords_max - coords_min + 1e-8)
+
+        # 파이프라인 입력 dict 구성 - 정규화된 좌표 사용
         data = {
-            'keypoint': coords[np.newaxis, ...],   # (1, T, V, 2)
-            'keypoint_score': score3d[np.newaxis, ...],  # (1, T, V)
+            'keypoint': coords_normalized[np.newaxis, ...],   # (1, T, V, 2)
+            'keypoint_score': score3d[np.newaxis, ...],      # (1, T, V)
             'num_person': 1
         }
-        print(f"[DEBUG] Before pipeline: keypoint {data['keypoint'].shape}, score {data['keypoint_score'].shape}")
 
-        # 5) FormatGCNInput → PackActionInputs 적용
+        # FormatGCNInput → PackActionInputs 적용
         packed = self.pipeline(data)
         x = packed['inputs']  # (N, M, T, V, C)
         
-        # 6) GPU로 이동
+        # GPU로 이동
         x = x.to(self.stgcn_context["device"])
-        print(f"[DEBUG] After pipeline and device move: inputs.shape : {x.shape}, device: {x.device}")
 
         try:
-            print("[DEBUG] Starting model inference...")
             with torch.no_grad():
                 # backbone에 직접 전달
                 feats = self.stgcn_context["model"].backbone(x)
                 out = self.stgcn_context["model"].cls_head(feats)
     
-            # 8) 결과 처리
-            prob         = torch.softmax(out[0], dim=-1)
-            scores_k, labels_k = torch.topk(prob, k=self.stgcn_context["topk"])
-            print("\n[DEBUG] Predictions:")
-            for idx, (score, label) in enumerate(zip(scores_k.cpu().numpy(),
-                                                     labels_k.cpu().numpy()), 1):
-                print(f" {idx}. Class {label}: {score:.3f}")
-
-            return {
-                "scores": scores_k.cpu().numpy(),
-                "labels": labels_k.cpu().numpy(),
-                "feedback": self.feedback_list
-            }
+                # 결과 처리
+                prob = torch.softmax(out[0], dim=-1)
+                scores_k, labels_k = torch.topk(prob, k=self.stgcn_context["topk"])
+        
+                return {
+                    "scores": scores_k.cpu().numpy(),
+                    "labels": labels_k.cpu().numpy(),
+                    "feedback": self.feedback_list
+                }
 
         except Exception as e:
-            print(f"\n[ERROR] Pipeline failed: {e.__class__.__name__}")
-            import traceback; traceback.print_exc()
-            if 'x' in locals():
-                print("\nFinal tensor state:")
-                print(f" - Shape : {x.shape}")
-                print(f" - Dtype : {x.dtype}")
-                print(f" - Device: {x.device}")
             return None
 
         
     def update_feedback_list(self, result: Dict):
-        """피드백 리스트 업데이트"""
+        """피드백 리스트 업데이트 - 다중 피드백 지원"""
         scores = result["scores"]
         labels = result["labels"]
         
-        # 피드백 리스트 초기화
-        self.feedback_list = []
-        
-        # 신뢰도 기반 피드백 필터링
-        high_conf_feedbacks = []
-        low_conf_feedbacks = []
-        
+        # 예측 결과 버퍼링 - 모든 상위 결과 저장
         for label, score in zip(labels, scores):
-            label = int(label)
-            if label == 1:  # 올바른 자세
-                if score >= 0.7:  # 높은 신뢰도로 올바른 자세 감지
-                    feedback = {
-                        "label": label,
-                        "message": "정확한 런지 자세입니다👍",
-                        "confidence": float(score),
-                        "priority": 1
-                    }
-                    high_conf_feedbacks.append(feedback)
-                continue
+            self.prediction_buffer.append((label, score))
+        
+        # 버퍼가 충분히 쌓였을 때 분석
+        if len(self.prediction_buffer) >= 5:
+            # 레이블별 평균 신뢰도 계산
+            label_scores = {}
+            for label, score in self.prediction_buffer:
+                if label not in label_scores:
+                    label_scores[label] = []
+                label_scores[label].append(score)
+            
+            # 새로운 피드백 리스트 생성
+            new_feedback_list = []
+            
+            for label, scores in label_scores.items():
+                avg_score = np.mean(scores)
+                count = len(scores)
                 
-            # 잘못된 자세에 대한 피드백
-            if score >= 0.5:  # 높은 신뢰도
-                feedback = {
-                    "label": label,
-                    "message": self.class_names[label],
-                    "confidence": float(score),
-                    "priority": 2
-                }
-                high_conf_feedbacks.append(feedback)
-            elif score >= 0.3:  # 낮은 신뢰도
-                feedback = {
-                    "label": label,
-                    "message": self.class_names[label],
-                    "confidence": float(score),
-                    "priority": 3
-                }
-                low_conf_feedbacks.append(feedback)
-        
-        # 우선순위에 따라 피드백 정렬 및 병합
-        self.feedback_list = sorted(high_conf_feedbacks + low_conf_feedbacks, 
-                                  key=lambda x: (x["priority"], -x["confidence"]))
-        
-        # 피드백 개수 제한 (최대 3개)
-        self.feedback_list = self.feedback_list[:3]
+                # 빈도와 신뢰도 조건 검사
+                if (count / len(self.prediction_buffer) >= 0.3 and  # 30% 이상 발생
+                    avg_score >= self.confidence_threshold):         # 신뢰도 임계값 이상
+                    
+                    # "올바른 자세" 피드백은 신뢰도가 매우 높을 때만
+                    if int(label) == 1 and avg_score < 0.9:
+                        continue
+                        
+                    new_feedback_list.append({
+                        "label": int(label),
+                        "message": self.class_names[int(label)],
+                        "confidence": float(avg_score),
+                        "priority": 2 if label != 1 else 1
+                    })
+            
+            # 우선순위에 따라 정렬 (잘못된 자세가 더 높은 우선순위)
+            new_feedback_list.sort(key=lambda x: (-x["priority"], -x["confidence"]))
+            
+            # 상위 3개 피드백만 유지
+            self.feedback_list = new_feedback_list[:3]
         
         # 피드백 히스토리 업데이트
         if self.feedback_list:
