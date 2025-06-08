@@ -99,19 +99,36 @@ class PoseVisualizer:
                 end_point = tuple(map(int, keypoints[end_idx][:2]))
                 cv.line(overlay, start_point, end_point, self.colors['skeleton'], 2)
         
+        # 2-1) 보조선 그리기 (빨간색 수직선)
+        # 왼쪽 손목-팔꿈치 수직선
+        if keypoints[7][2] > 0.5 and keypoints[9][2] > 0.5:  # 왼쪽 팔꿈치(7)와 손목(9)
+            elbow_x, elbow_y = map(int, keypoints[7][:2])
+            wrist_x, wrist_y = map(int, keypoints[9][:2])
+            cv.line(overlay, (wrist_x, wrist_y), (wrist_x, elbow_y), (0, 0, 255), 2)
+        
+        # 오른쪽 손목-팔꿈치 수직선
+        if keypoints[8][2] > 0.5 and keypoints[10][2] > 0.5:  # 오른쪽 팔꿈치(8)와 손목(10)
+            elbow_x, elbow_y = map(int, keypoints[8][:2])
+            wrist_x, wrist_y = map(int, keypoints[10][:2])
+            cv.line(overlay, (wrist_x, wrist_y), (wrist_x, elbow_y), (0, 0, 255), 2)
+        
+        # 왼쪽 발목-무릎 수직선
+        if keypoints[13][2] > 0.5 and keypoints[15][2] > 0.5:  # 왼쪽 무릎(13)과 발목(15)
+            knee_x, knee_y = map(int, keypoints[13][:2])
+            ankle_x, ankle_y = map(int, keypoints[15][:2])
+            cv.line(overlay, (ankle_x, ankle_y), (ankle_x, knee_y), (0, 0, 255), 2)
+        
+        # 오른쪽 발목-무릎 수직선
+        if keypoints[14][2] > 0.5 and keypoints[16][2] > 0.5:  # 오른쪽 무릎(14)과 발목(16)
+            knee_x, knee_y = map(int, keypoints[14][:2])
+            ankle_x, ankle_y = map(int, keypoints[16][:2])
+            cv.line(overlay, (ankle_x, ankle_y), (ankle_x, knee_y), (0, 0, 255), 2)
+    
         # 3) 피드백 표시
         if result is not None and 'feedback' in result:
             feedback_list = result['feedback']
             
-            # 디버깅: 원본 분석 결과 표시
-            if 'scores' in result and 'labels' in result:
-                scores = result['scores']
-                labels = result['labels']
-                debug_text = f"Raw predictions: "
-                for s, l in zip(scores[:3], labels[:3]):
-                    debug_text += f"[{l}:{s:.2f}] "
-                cv.putText(overlay, debug_text, (10, height - 20), 
-                          cv.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv.LINE_AA)
+
             
             # 피드백이 있는 경우
             if feedback_list:

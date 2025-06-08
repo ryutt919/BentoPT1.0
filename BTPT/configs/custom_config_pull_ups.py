@@ -2,7 +2,8 @@ import os
 
 # 기본 경로 설정
 base_dir = 'data'
-class_name = 'lunge'  # 현재 처리 중인 클래스 이름
+class_name = 'pull_ups' 
+''  # 현재 처리 중인 클래스 이름
 ann_file_train = os.path.join(base_dir, class_name, 'pkl', 'train.pkl')
 ann_file_val = os.path.join(base_dir, class_name, 'pkl', 'val.pkl')
 
@@ -90,7 +91,7 @@ test_pipeline = [
         'j',
     ], type='GenSkeFeat'),
     dict(
-        clip_len=32, num_clips=9, test_mode=True, type='UniformSampleFrames'),
+        clip_len=32, num_clips=10, test_mode=True, type='UniformSampleFrames'),
     dict(type='PoseDecode'),
     dict(num_person=1, type='FormatGCNInput'),
     dict(type='PackActionInputs'),

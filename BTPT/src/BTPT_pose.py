@@ -12,38 +12,59 @@ from mmaction.datasets.transforms.formatting import FormatGCNInput, PackActionIn
 from scipy.ndimage import median_filter, gaussian_filter
 
 class PoseEstimator:
-    def __init__(self):
+    def __init__(self, exercise_type="lunge"):
+        # 운동별 설정
+        self.exercise_configs = {
+            "lunge": {
+                "config_path": "configs/custom_config.py",
+                "checkpoint_path": "models/lunge/best_acc_top1_epoch_50.pth",
+                "label_map": {
+                    0: "판별 불가",
+                    1: "올바른 자세",
+                    2: "무릎이 발끝을 넘어감",
+                    3: "등이 구부러짐",
+                    4: "발이 불안정함",
+                    5: "몸통이 흔들림",
+                    6: "뒷무릎이 바닥에 닿음",
+                    7: "최대 수축 필요",
+                    8: "최대 이완 필요"
+                }
+            },
+            "pull_up": {
+                "config_path": "configs/custom_config_pull_ups.py",
+                "checkpoint_path": "models/pull_ups/best_acc_top1_epoch_50.pth",
+                "label_map": {
+                    0: "판별 불가",
+                    1: "올바른 자세",
+                    2: "어깨 올라감",
+                    3: "그립이 좁음",
+                    4: "몸통이 흔들림",
+                    5: "척추 불균형",
+                    6: "어깨 비대칭",
+                    7: "최대 수축 필요",
+                    8: "최대 이완 필요"
+                }
+            }
+        }
+
         # YOLO 모델 로드
         self.pose_model = YOLO('yolov8x-pose.pt')
         self.pose_model.verbose = False
         
+        # 선택된 운동에 따른 설정 로드
+        self.exercise_type = exercise_type
+        self.config = self.exercise_configs[exercise_type]
+        
         # ST-GCN 모델 로드
-        config_path = "configs/custom_config.py"
-        checkpoint_path = "models/lunge/best_acc_top1_epoch_50.pth"
         self.stgcn_context = self._load_stgcn_model(
-            config_path, checkpoint_path, topk=3, device="cuda:0"
+            self.config["config_path"], 
+            self.config["checkpoint_path"],
+            topk=3, 
+            device="cuda:0"
         )
         
-        # COCO 포맷의 17개 키포인트 이름 정의
-        self.keypoint_names = [
-            'nose', 'left_eye', 'right_eye', 'left_ear', 'right_ear',
-            'left_shoulder', 'right_shoulder', 'left_elbow', 'right_elbow',
-            'left_wrist', 'right_wrist', 'left_hip', 'right_hip',
-            'left_knee', 'right_knee', 'left_ankle', 'right_ankle'
-        ]
-        
-        # 클래스 매핑 수정 (9개 클래스로)
-        self.class_names = {
-            0: "판별 불가",
-            1: "올바른 자세",
-            2: "무릎 90도 미만 주의의",
-            3: "등이 구부러짐",
-            4: "발이 불안정함",
-            5: "몸통이 흔들림",
-            6: "뒷무릎이 바닥에 닿음",
-            7: "최대 수축 필요",
-            8: "최대 이완 필요"
-        }
+        # 클래스 매핑 설정
+        self.class_names = self.config["label_map"]
         
         # 피드백 리스트 관리
         self.feedback_list = []
@@ -52,7 +73,7 @@ class PoseEstimator:
         # 슬라이딩 윈도우 파라미터
         self.window_size = 32
         self.stride = 16
-        self.buffer_size = 64
+        self.buffer_size = 32
         self.keypoints_buffer = deque(maxlen=self.buffer_size)
         self.frame_numbers_buffer = deque(maxlen=self.buffer_size)
         self.frame_counter = 0

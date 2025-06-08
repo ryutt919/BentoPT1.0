@@ -15,8 +15,8 @@ from pathlib import Path
 class ExerciseFeedbackApp:
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title("운동 피드백 시스템")
-        self.root.geometry("800x600")  # 창 크기 증가
+        self.root.title("BTPT 1.0")
+        self.root.geometry("400x400")  # 창 크기 증가
         
         # 기본 폰트 설정
         default_font = ('Malgun Gothic', 10)  # 한글 지원 폰트
@@ -26,8 +26,8 @@ class ExerciseFeedbackApp:
         self.keypoints_buffer = deque(maxlen=32)  # ST-GCN 입력용 32 프레임 버퍼
         
         # 창을 화면 중앙에 위치
-        window_width = 800
-        window_height = 600
+        window_width = 400
+        window_height = 400
         screen_width = self.root.winfo_screenwidth()
         screen_height = self.root.winfo_screenheight()
         center_x = int(screen_width/2 - window_width/2)
@@ -38,14 +38,24 @@ class ExerciseFeedbackApp:
         self.exercise_frame = ttk.LabelFrame(self.root, text="운동 종류 선택", padding="10")
         self.exercise_frame.pack(fill="x", padx=10, pady=5)
         
+        # 운동 종류와 한글 이름 매핑
+        self.exercise_mapping = {
+            "런지": "lunge",
+            "풀업": "pull_up"
+        }
+        
         self.exercise_types = ["런지", "풀업"]
         self.selected_exercise = tk.StringVar()
         self.selected_exercise.set(self.exercise_types[0])
         
         for exercise in self.exercise_types:
-            ttk.Radiobutton(self.exercise_frame, text=exercise, 
-                          variable=self.selected_exercise, value=exercise).pack(anchor="w")
-        
+            ttk.Radiobutton(
+                self.exercise_frame, 
+                text=exercise, 
+                variable=self.selected_exercise, 
+                value=exercise
+            ).pack(anchor="w")
+
         # 영상 선택
         self.video_frame = ttk.LabelFrame(self.root, text="영상 선택", padding="10")
         self.video_frame.pack(fill="x", padx=10, pady=5)
@@ -104,15 +114,15 @@ class ExerciseFeedbackApp:
             self.video_label.config(text=f"선택된 영상: {os.path.basename(filename)}")
 
     def start_analysis(self):
-        selected_exercise = self.selected_exercise.get()
+        selected_exercise = self.exercise_mapping[self.selected_exercise.get()]
         video_path = self.video_path.get()
         
         if not video_path:
             tk.messagebox.showerror("오류", "영상을 선택해주세요.")
             return
             
-        # 포즈 추출기와 시각화 도구 초기화
-        pose_estimator = PoseEstimator()
+        # 포즈 추출기와 시각화 도구 초기화 - exercise_type 전달
+        pose_estimator = PoseEstimator(exercise_type=selected_exercise)
         visualizer = PoseVisualizer()
         
         # 비디오 캡처 객체 생성
