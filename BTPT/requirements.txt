@@ -1,0 +1,23 @@
+# Deep Learning & Computer Vision
+torch>=2.0.0
+torchvision>=0.15.0
+ultralytics>=8.0.0  # YOLOv8
+opencv-python>=4.8.0
+mmcv>=2.0.0
+mmengine>=0.8.0
+mmaction2>=1.0.0
+numpy>=1.24.0
+
+# Scientific Computing
+scipy>=1.10.0
+scikit-learn>=1.3.0
+
+# GUI & Image Processing
+pillow>=10.0.0  # PIL
+tk>=8.6.0  # tkinter
+
+# Utilities
+tqdm>=4.65.0
+pandas>=2.0.0
+seaborn>=0.12.0
+matplotlib>=3.7.0
