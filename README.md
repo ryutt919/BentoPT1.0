@@ -154,17 +154,17 @@ Kinetics-400은 유튜브 기반의 데이터셋이지만,
 
 ---
 # 가상환경 설정 권장 
-conda create -n btpt python=3.10 -y
-conda activate btpt
+- conda create -n btpt python=3.10 -y
+- conda activate btpt
 
 # 필요한 패키지 설치
 pip install -r requirements.txt
 
 ## 파일 설명
-BTPT_main.py	메인 GUI 인터페이스, 분석 시작 및 시각화 실행
-BTPT_pose.py	포즈 추정, 필터링, 모델 호출, 피드백 등 핵심 분석 로직
-BTPT_vis.py	키포인트 시각화 및 피드백 메시지 오버레이
-requirements.txt	실행에 필요한 라이브러리 목록
+- BTPT_main.py	메인 GUI 인터페이스, 분석 시작 및 시각화 실행
+- BTPT_pose.py	포즈 추정, 필터링, 모델 호출, 피드백 등 핵심 분석 로직
+- BTPT_vis.py	키포인트 시각화 및 피드백 메시지 오버레이
+- requirements.txt	실행에 필요한 라이브러리 목록
 
 ### 실행
 python BTPT_main.py
