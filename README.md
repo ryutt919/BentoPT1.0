@@ -3,7 +3,7 @@
 ##  프로젝트 개요  
 OpenCV와 Python 기반의 이 시스템은 사용자가 짧은 운동 영상과 운동 종류를 입력하면,  
 **실시간 영상 재생**, **관절 키포인트 시각화**, **보조선 출력**을 통해 **운동 자세를 분석하고 피드백**을 제공합니다.
-![image](https://github.com/user-attachments/assets/c5d4f81e-c834-4ebb-8c96-014f4fcf7302)
+
 ---
 
 ##  주요 기능 및 처리 흐름
@@ -70,9 +70,13 @@ OpenCV와 Python 기반의 이 시스템은 사용자가 짧은 운동 영상과
 ---
 
 ### 7.  키포인트 시각화 및 피드백 제공
+- GUI를 통한 편리한 사용 제공
 - **OpenCV** 기반 실시간 키포인트/스켈레톤 오버레이
 - 관절 연결선 + 발목-무릎 보조선 포함
-- 자동 재생 / 수동 라벨링 / 프레임 탐색 지원
+- 실시간 피드백 제공
+![image](https://github.com/user-attachments/assets/558d1a7e-1b03-460d-9a75-9d626525b801)
+![image](https://github.com/user-attachments/assets/fc884bbe-7b65-4745-8b33-d6f1a2005cf1)
+![image](https://github.com/user-attachments/assets/ae76982d-cff3-4648-87aa-19268366e8e7)
 
 ---
 
