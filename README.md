@@ -66,14 +66,19 @@ OpenCV와 Python 기반의 이 시스템은 사용자가 짧은 운동 영상과
 - **라벨 없는 시퀀스**에 대해 학습된 모델로 예측 수행
 - **신뢰도 기준 이상(≥ 0.8)**인 예측 결과만 가짜 라벨로 추가
 - Pseudo-label 데이터까지 포함해 학습 데이터셋 확장 및 성능 향상
-- 학습 결과
+- 
+  **학습 결과**
+- 학습 데이터의 질적 차이로 인해 풀업이 더 좋은 성능을 보여줌
+- 런지의 경우 window size와 stride와 같은 파라미터를 조정하여 성능 향상을 보여줌
+
+- 
 - 런지
-![image](https://github.com/user-attachments/assets/45666544-166d-432a-8bb2-597ed9636b7c)
-![image](https://github.com/user-attachments/assets/c5d4f81e-c834-4ebb-8c96-014f4fcf7302)
+- ![image](https://github.com/user-attachments/assets/45666544-166d-432a-8bb2-597ed9636b7c)
+- ![image](https://github.com/user-attachments/assets/c5d4f81e-c834-4ebb-8c96-014f4fcf7302)
 
 - 풀업
-![image](https://github.com/user-attachments/assets/9543df6e-479c-485a-b9e3-11194ca070b6)
-![image](https://github.com/user-attachments/assets/9e661e8f-f3be-47c4-b6fb-fade493d7a2c)
+- ![image](https://github.com/user-attachments/assets/9543df6e-479c-485a-b9e3-11194ca070b6)
+- ![image](https://github.com/user-attachments/assets/9e661e8f-f3be-47c4-b6fb-fade493d7a2c)
 
 ---
 
