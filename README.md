@@ -75,7 +75,7 @@ OpenCV와 Python 기반의 이 시스템은 사용자가 짧은 운동 영상과
 - 런지
 - ![image](https://github.com/user-attachments/assets/45666544-166d-432a-8bb2-597ed9636b7c)
 - ![image](https://github.com/user-attachments/assets/c5d4f81e-c834-4ebb-8c96-014f4fcf7302)
-<br>
+
 - 풀업
 - ![image](https://github.com/user-attachments/assets/9543df6e-479c-485a-b9e3-11194ca070b6)
 - ![image](https://github.com/user-attachments/assets/9e661e8f-f3be-47c4-b6fb-fade493d7a2c)
